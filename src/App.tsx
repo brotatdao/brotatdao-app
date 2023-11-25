@@ -1,87 +1,277 @@
-import reactLogo from './assets/react.svg'
-import fleekLogo from './assets/fleekLogo.svg'
-import fleekMark from './assets/fleekMark.svg'
-import plusIcon from './assets/plus.svg'
-import viteLogo from './assets/vite.svg'
+import React, { useEffect, useState } from "react";
+import { FleekSdk, ApplicationAccessTokenService } from '@fleekxyz/sdk';
+import ReactDOMServer from 'react-dom/server';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import Explorer from './Explorer';
+import ProfileCard from './ProfileCard';
+import Web3 from 'web3';
+import Web3Modal from "web3modal"; 
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import { listNftsByAccount } from './OpenSea';
+import WeaveDB from "weavedb-sdk";
+import "./App.css";
 
-import './App.css'
+
+
+// Initialize Fleek SDK
+const applicationService = new ApplicationAccessTokenService({
+    clientId: process.env.REACT_APP_FLEEK_CLIENT_ID!,  // Fleek env variable
+});
+const fleekSdk = new FleekSdk({ accessTokenService: applicationService });
+
+// Initialize WeaveDB
+const db = new WeaveDB({ contractTxId: process.env.REACT_APP_WEAVEDB_CONTRACT! });  //WeaveDB contract env variable
+// Create an async function to initialize the database
+async function initDb() {
+    await db.init();
+}
+// Call the function
+initDb();
 
 function App() {
-  return (
-    <main>
-      <div className="hero-top">
-        <img src={fleekLogo} style={{ height: 87 }} />
-        <img src={plusIcon} />
-        <img src={reactLogo} style={{ height: 87 }} />
-      </div>
-      <p className='description'>
-        This is a template for creating a React site build it with Vite and deploying it on Fleek.
-      </p>
-      <ul role="list" className='card-list'>
-        <Card
-          icon={fleekMark}
-          width={31}
-          href="https://docs.fleek.xyz/"
-          title="Fleek Documentation"
-          body="Learn about Fleek & the available services by cheking our official docs."
-        />
+    // State hooks
+    const [isLoading, setIsLoading] = useState(false);
+    const [uploadLink, setUploadLink] = useState("");
+    const [bio, setBio] = useState("");
+    const [name, setName] = useState("");
+    const [account, setAccount] = useState("");
+    const [nft, setNft] = useState<Nft | null>(null);
+    const [nfts, setNfts] = useState<Nft[]>([]);
+    const [dbIsInitialized, setDbIsInitialized] = useState(false);
+    
+    const fetchNfts = async (account: string) => {
+        try {
+            const data = await listNftsByAccount(account);
+            setNfts(data.nfts);
+        } catch (error) {
+            alert((error as Error).message);
+        }
+    };
 
-        <Card
-          icon={reactLogo}
-          width={31}
-          href="https://react.dev/"
-          title="React Documentation"
-          body="Learn about React in their official docs."
-        />
+    const connectWallet = async () => {
+        const providerOptions = {
+            walletconnect: {
+                package: WalletConnectProvider, 
+                options: {
+                    infuraId: process.env.REACT_APP_INFURA_ID  // Infura env variable
+                }
+            }
+        };
+    
+        const web3Modal = new Web3Modal({
+            network: "mainnet", 
+            cacheProvider: true, 
+            providerOptions,
+        });
+    
+        const provider = await web3Modal.connect();  
+        const web3 = new Web3(provider);
+        const accounts = await web3.eth.getAccounts();
+        setAccount(accounts[0]);
+        fetchNfts(accounts[0]);
+    };
 
-        <Card
-          icon={fleekMark}
-          width={31}
-          href="https://blog.fleek.xyz/"
-          title="Fleek Blog"
-          body="Checkout our Blog for more information about Fleek."
-        />
+    useEffect(() => {
+        const initDb = async () => {
+            await db.init();
+            setDbIsInitialized(true);
+            connectWallet();
+        };
 
-        <Card
-          icon={viteLogo}
-          width={31}
-          href="https://vitejs.dev/guide/"
-          title="Vite Documentation"
-          body="Learn about Vite & how it can bring you a modern development experience."
-        />
-      </ul>
-    </main >
-  )
-}
+        initDb();
+    }, []);
 
-type CardProps = {
-  title: string;
-  body: string;
-  href: string;
-  icon: string;
-  width: number;
-}
+    // If the database is not initialized, return null or a loading spinner
+    if (!dbIsInitialized) {
+        return null;  // Or return a loading spinner
+    }
 
-function Card({ title, width, body, href, icon }: CardProps) {
-  return (
-    <li className='card'>
-      <a href={href}>
-        <div className='card-top-row'>
-          <img
-            alt='card-icon'
-            style={{ height: 31, width }}
-            src={icon}
-          />
-          <h2>
-            {title}
-          </h2>
-        </div>
-        <p>
-          {body}
-        </p>
-      </a>
-    </li>
-  )
-}
+    
+    interface Nft {
+        identifier: string;
+        collection: string;
+        contract: string;
+        token_standard: string;
+        name: string;
+        description: string;
+        image_url: string;
+        metadata_url: string;
+        created_at: string;
+        updated_at: string;
+        is_disabled: boolean;
+        is_nsfw: boolean;
+    }
+     
 
-export default App
+    const handleNftSelect = (nft: Nft) => {
+        setNft(nft);
+    };
+
+    const handleBioChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setBio(event.target.value);
+    };
+
+    const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setName(event.target.value);
+    };
+
+    const handleUpload = async () => {
+        if (!nft || !bio || !name) {
+            alert("Please select an NFT, enter a name and biography");
+            return;
+        }
+
+        const profilePicUrl = nft.image_url;
+
+        // Generate HTML content using renderToString
+        const profileCardHtml = ReactDOMServer.renderToString(
+            <ProfileCard name={name} bio={bio} profilePicUrl={nft.image_url} />
+        );
+    
+        const htmlContent = `
+            <html>
+            <head>
+                <title>Profile Page</title>
+            </head>
+            <body>
+                ${profileCardHtml}
+            </body>
+            </html>
+        `;
+
+        // Creating HTML file
+        const htmlFile = new File([htmlContent], "index.html", { type: 'text/html' });
+
+        // File array for upload
+        const response = await fetch(nft.image_url);
+        const blob = await response.blob();
+        const arrayBuffer = await new Response(blob).arrayBuffer();
+        const uploadTimestamp = new Date().getTime();
+        
+        const files = [
+          { path: htmlFile.name, content: await htmlFile.arrayBuffer() },
+          { path: nft.image_url.split('/').pop()!, content: arrayBuffer },
+        ];
+
+        // Upload to IPFS
+        try {
+            setIsLoading(true);
+            const uploadResult = await fleekSdk.ipfs().addAll(files);
+            setUploadLink(`ipfs://${uploadResult[0].cid}`);
+      
+            // Add document to WeaveDB
+            const profileInfo = {
+                ...nft,
+                age: uploadTimestamp, 
+                ipfsUrl: `ipfs://${uploadResult[0].cid}`,
+                profilePicUrl: `ipfs://${uploadResult[1].cid}`,
+                profileName: name,
+                bio,
+                walletAddress: account,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+            };
+            await db.add(profileInfo, process.env.REACT_APP_WEAVEDB_COLLECTION!);  
+
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setIsLoading(false);
+            }
+          
+        };
+
+
+    // Function to reformat link
+    const reformatLink = (link: string) => {
+        const hash = link.split('//')[1].split('.')[0];
+        return `ipfs://${hash}`;
+    };
+
+    return (
+        <Router>
+            <div>
+                <nav>
+                    <ul>
+                        <li>
+                            <Link to="/">Home</Link>
+                        </li>
+                        <li>
+                            <Link to="/upload">Upload</Link>
+                        </li>
+                        <li>
+                            <Link to="/explorer">Explorer</Link>
+                        </li>
+                    </ul>
+                </nav>
+    
+                <Routes>
+                    <Route path="/explorer" element={<Explorer />} />
+                    <Route path="/upload" element={
+                        <div className="App">
+                            <header className="App-header">
+                                {isLoading ? (
+                                    <div className="uploading-text">Uploading...</div>
+                                ) : (
+                                    <>
+                                        <p className="title-text">Face Fables :)</p>
+                                        <div className="flex-container">
+                                            <div className="input-container">
+                                                <div className="nft-grid">
+                                                    {nfts.map((nft, index) => (
+                                                        <div key={index} className="nft-item" onClick={() => handleNftSelect(nft)}>
+                                                            <img src={nft.image_url} alt={nft.name} />
+                                                            <div>{nft.name}</div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                <div className="name-container">
+                                                    <label className="styled-label" htmlFor="name">Name your NFT:</label>
+                                                    <input id="name" onChange={handleNameChange} className="styled-input" />
+                                                </div>
+                                                <div className="bio-container">
+                                                    <label className="styled-label" htmlFor="bio">Biography:</label>
+                                                    <textarea id="bio" onChange={handleBioChange} className="styled-textarea"></textarea>
+                                                </div>
+                                                <div className="button-container">
+                                                    <button
+                                                        className="styled-button"
+                                                        onClick={handleUpload}
+                                                    >
+                                                        Upload
+                                                    </button>
+                                                    {uploadLink && (
+                                                        <a
+                                                            className="upload-link"
+                                                            href={reformatLink(uploadLink)}
+                                                            target="__blank"
+                                                        >
+                                                            <b>Copy this link to your subdomain content hash in the ENS app : <br /></b>
+                                                            {reformatLink(uploadLink)}
+                                                        </a>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+                            </header>
+                        </div>
+                    } />
+                    <Route path="/" element={
+                        <div>
+                            <h1>Welcome to our App</h1>
+                            <p>To upload, navigate to the Upload page. To explore existing uploads, navigate to the Explorer page.</p>
+                        </div>
+                    } />
+                </Routes>
+            </div>
+        </Router>
+    );
+    
+
+    
+    }
+    
+    export default App;
+    

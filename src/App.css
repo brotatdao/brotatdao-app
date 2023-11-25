@@ -1,69 +1,111 @@
-main {
-  width: 75%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2.5rem;
-  top: 50%;
-  left: 50%;
-  translate: -50% -50%;
-  position: absolute;
-}
-
-.hero-top {
-  display: flex;
-  align-items: center;
-  gap: 50px;
-}
-
-.description {
-  font-size: 1.5rem;
-  line-height: 2rem;
+.App {
+  background-color: #f4f4f4;
+  font-family: Arial, sans-serif;
   text-align: center;
-  width: 100%;
-}
-
-.card-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 15px;
-}
-
-.card {
-  list-style: none;
-}
-
-.card > a {
-  color: white;
-  box-sizing: border-box;
-  height: 100%;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  text-decoration: none;
-  border-radius: 1.5rem;
-  border: 0.85px solid #313538;
-  gap: 15px;
-  padding: 2rem 1.25rem;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
 }
 
-.card-top-row {
-  gap: 15px;
+.App-header {
+  background: linear-gradient(to bottom right, #fff, #f2f2f2);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  width: 80%;
+  max-width: 800px;
+  padding: 40px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.uploading-text {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.title-text {
+  font-size: 36px;
+  font-weight: bold;
+  color: #ff7f00;
+  margin-bottom: 40px;
+}
+
+.flex-container {
   display: flex;
-  align-items: start;
+  gap: 32px;
 }
 
-.card h2 {
-  font-size: 1.25rem;
-  line-height: 2rem;
-  font-weight: 700;
-  margin: 0;
+.input-container, .button-container {
+  flex: 1;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.styled-label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #555;
+}
+
+.styled-input, .styled-textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.styled-button {
+  background-color: #ff7f00;
   color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  cursor: pointer;
 }
 
-.card p {
-  text-align: start;
-  font-size: 16px;
-  line-height: 1.5rem;
-  color: #9ca3af;
-  margin: 0;
+.styled-button:hover {
+  background-color: #ff9a33;
+}
+
+.upload-link {
+  display: block;
+  margin-top: 12px;
+  color: #333;
+  text-decoration: none;
+}
+
+.upload-link:hover {
+  color: #666;
+}
+
+.nft-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 16px;
+}
+
+.nft-item {
+  border: 1px solid #ddd;
+  padding: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.nft-item img {
+  max-width: 100%;
+  border-radius: 4px;
 }
