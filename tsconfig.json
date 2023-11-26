@@ -5,6 +5,7 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "jsx": "react-jsx",
+    "typeRoots" : ["./types", "./node_modules/@types"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -20,6 +21,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["*.ts", "types/*.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
