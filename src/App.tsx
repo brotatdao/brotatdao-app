@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { FleekSdk, ApplicationAccessTokenService } from '@fleekxyz/sdk';
 import ReactDOMServer from 'react-dom/server';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Explorer from './Explorer';
-import ProfileCard from './ProfileCard';
+import Explorer from './pages/Explorer/Explorer';
+import ProfileCard from './components/ProfileCard';
 import Web3 from 'web3';
 import Web3Modal from "web3modal"; 
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { listNftsByAccount } from './OpenSea';
+import { listNftsByAccount } from './components/OpenSea';
 import WeaveDB from "weavedb-sdk";
 import "./App.css";
 
