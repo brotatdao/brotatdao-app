@@ -1,15 +1,22 @@
 // WalletConnect.tsx
-import { createWeb3Modal as createWeb3ModalBase, defaultConfig } from '@web3modal/ethers5/react'
+import { createWeb3Modal } from '@web3modal/wagmi/react'
+import { walletConnectProvider, EIP6963Connector } from '@web3modal/wagmi'
+import { WagmiConfig, configureChains, createConfig } from 'wagmi'
+import { publicProvider } from 'wagmi/providers/public'
+import { mainnet } from 'viem/chains'
+import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
+import { InjectedConnector } from 'wagmi/connectors/injected'
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
+
+// 1. Get projectId at https://cloud.walletconnect.com
 const projectId = process.env.REACT_APP_WALLETCONNECT_ID!  // Ensure you have this env variable set
 
-const mainnet = {
-  chainId: 1,
-  name: 'Ethereum',
-  currency: 'ETH',
-  explorerUrl: 'https://etherscan.io',
-  rpcUrl: 'https://cloudflare-eth.com'
-}
+// 2. Create wagmiConfig
+const { chains, publicClient } = configureChains(
+  [mainnet],
+  [walletConnectProvider({ projectId }), publicProvider()]
+)
 
 const metadata = {
   name: 'My Website',
@@ -18,12 +25,17 @@ const metadata = {
   icons: ['https://avatars.mywebsite.com/']
 }
 
-const createWeb3Modal = () => {
-  return createWeb3ModalBase({
-    ethersConfig: defaultConfig({ metadata }),
-    chains: [mainnet],
-    projectId
-  });
-}
+export const wagmiConfig = createConfig({
+  autoConnect: true,
+  connectors: [
+    new WalletConnectConnector({ chains, options: { projectId, showQrModal: false, metadata } }),
+    new InjectedConnector({ chains, options: { shimDisconnect: true } }),
+    new CoinbaseWalletConnector({ chains, options: { appName: metadata.name } })
+  ],
+  publicClient
+});
 
-export default createWeb3Modal;  // Export the createWeb3Modal function
+// 3. Create modal
+const createModal = () => createWeb3Modal({ wagmiConfig, projectId, chains })
+
+export default createModal;  // Export the createWeb3Modal function

@@ -4,11 +4,10 @@ import ReactDOMServer from 'react-dom/server';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Explorer from './pages/Explorer/Explorer';
 import ProfileCard from './components/ProfileCard';
-import Web3 from 'web3';
-import Web3Modal from "web3modal"; 
-import WalletConnectProvider from "@walletconnect/web3-provider";
 import { listNftsByAccount } from './components/OpenSea';
 import WeaveDB from "weavedb-sdk";
+import createModal, { wagmiConfig } from './components/WalletConnect';
+import { WagmiConfig } from 'wagmi';
 import "./App.css";
 
 
@@ -39,52 +38,35 @@ function App() {
     const [nfts, setNfts] = useState<Nft[]>([]);
     const [dbIsInitialized, setDbIsInitialized] = useState(false);
     
-    const fetchNfts = async (account: string) => {
-        try {
-            const data = await listNftsByAccount(account);
-            setNfts(data.nfts);
-        } catch (error) {
-            alert((error as Error).message);
-        }
-    };
+    const { open } = createModal();
 
-    const connectWallet = async () => {
-        const providerOptions = {
-            walletconnect: {
-                package: WalletConnectProvider, 
-                options: {
-                    infuraId: process.env.REACT_APP_INFURA_ID  // Infura env variable
-                }
-            }
-        };
-    
-        const web3Modal = new Web3Modal({
-            network: "mainnet", 
-            cacheProvider: true, 
-            providerOptions,
-        });
-    
-        const provider = await web3Modal.connect();  
-        const web3 = new Web3(provider);
-        const accounts = await web3.eth.getAccounts();
-        setAccount(accounts[0]);
-        fetchNfts(accounts[0]);
-    };
+    const fetchNfts = async (account: string) => {
+    try {
+        const data = await listNftsByAccount(account);
+        if (data && data.nfts) {
+            setNfts(data.nfts);
+        } else {
+            console.error('Unexpected response format from OpenSea API:', data);
+        }
+    } catch (error) {
+        alert((error as Error).message);
+    }
+};
 
     useEffect(() => {
         const initDb = async () => {
             await db.init();
             setDbIsInitialized(true);
-            connectWallet();
         };
 
         initDb();
     }, []);
 
-    // If the database is not initialized, return null or a loading spinner
-    if (!dbIsInitialized) {
-        return null;  // Or return a loading spinner
-    }
+    useEffect(() => {
+        if (account) {
+            fetchNfts(account);
+        }
+    }, [account]);
 
     
     interface Nft {
@@ -189,6 +171,7 @@ function App() {
     };
 
     return (
+        <WagmiConfig config={wagmiConfig}>
         <Router>
             <div>
                 <nav>
@@ -205,6 +188,8 @@ function App() {
                     </ul>
                 </nav>
     
+                <button onClick={() => open()}>Connect Wallet</button>
+
                 <Routes>
                     <Route path="/explorer" element={<Explorer />} />
                     <Route path="/upload" element={
@@ -267,6 +252,7 @@ function App() {
                 </Routes>
             </div>
         </Router>
+        </WagmiConfig>
     );
     
 

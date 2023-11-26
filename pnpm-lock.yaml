@@ -17,9 +17,6 @@ dependencies:
   '@web3modal/wagmi':
     specifier: ^3.3.2
     version: 3.3.2(@types/react@18.2.38)(@wagmi/core@1.4.7)(typescript@5.0.4)(viem@1.19.9)
-  ethers:
-    specifier: 5.7.2
-    version: 5.7.2
   react:
     specifier: ^18.2.0
     version: 18.2.0
