@@ -4,6 +4,7 @@ import ReactDOMServer from 'react-dom/server';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Explorer from './pages/Explorer/Explorer';
 import ProfileCard from './components/ProfileCard';
+import { WEAVEDB_CONTRACT, WEAVEDB_COLLECTION } from "./components/Constants";
 import { listNftsByAccount } from './components/OpenSea';
 import WeaveDB from "weavedb-sdk";
 import createModal, { wagmiConfig } from './components/WalletConnect';
@@ -14,12 +15,12 @@ import "./App.css";
 
 // Initialize Fleek SDK
 const applicationService = new ApplicationAccessTokenService({
-    clientId: process.env.REACT_APP_FLEEK_CLIENT_ID!,  // Fleek env variable
+    clientId: import.meta.env.VITE_FLEEK_CLIENT_ID!,  // Fleek env variable
 });
 const fleekSdk = new FleekSdk({ accessTokenService: applicationService });
 
 // Initialize WeaveDB
-const db = new WeaveDB({ contractTxId: process.env.REACT_APP_WEAVEDB_CONTRACT! });  //WeaveDB contract env variable
+const db = new WeaveDB({ contractTxId: WEAVEDB_CONTRACT });  
 // Create an async function to initialize the database
 async function initDb() {
     await db.init();
@@ -153,7 +154,7 @@ function App() {
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
             };
-            await db.add(profileInfo, process.env.REACT_APP_WEAVEDB_COLLECTION!);  
+            await db.add(profileInfo, WEAVEDB_COLLECTION);  
 
             } catch (err) {
                 console.error(err);

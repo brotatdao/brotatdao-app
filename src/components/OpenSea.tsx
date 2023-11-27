@@ -3,7 +3,7 @@ export async function listNftsByAccount(address: string) {
         method: 'GET',
         headers: {
             accept: 'application/json',
-            'x-api-key': process.env.REACT_APP_OPENSEA_KEY!  // Ensure you have this env variable set
+            'x-api-key': import.meta.env.VITE_OPENSEA_KEY!  // Ensure you have this env variable set
         }
     };
 

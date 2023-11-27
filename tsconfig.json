@@ -6,7 +6,12 @@
     "skipLibCheck": true,
     "jsx": "react-jsx",
     "typeRoots" : ["./types", "./node_modules/@types"],
-
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "paths": {
+      "weavedb-sdk": ["types/weavedb-sdk"]
+    },
+    
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -21,6 +26,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["*.ts", "types/*.d.ts"],
+  "include": ["./**/*.ts", "./**/*.tsx", "./types/**/*.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
