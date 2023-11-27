@@ -10,7 +10,7 @@ import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
 
 // 1. Get projectId at https://cloud.walletconnect.com
-const projectId = process.env.REACT_APP_WALLETCONNECT_ID!  // Ensure you have this env variable set
+const projectId = import.meta.env.VITE_WALLETCONNECT_ID!  // Ensure you have this env variable set
 
 // 2. Create wagmiConfig
 const { chains, publicClient } = configureChains(

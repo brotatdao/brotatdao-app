@@ -21,6 +21,7 @@
     "stream-browserify": "^3.0.0",
     "util": "^0.12.5",
     "viem": "^1.19.9",
+    "vite-plugin-node-polyfills": "^0.16.0",
     "wagmi": "^1.4.7",
     "weavedb-sdk": "^0.37.2",
     "web3": "^4.2.2",
