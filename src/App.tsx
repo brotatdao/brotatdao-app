@@ -7,10 +7,10 @@ import ProfileCard from './components/ProfileCard';
 import { WEAVEDB_CONTRACT, WEAVEDB_COLLECTION } from "./components/Constants";
 import { listNftsByAccount } from './components/OpenSea';
 import WeaveDB from "weavedb-sdk";
-import createModal, { wagmiConfig } from './components/WalletConnect';
-import { WagmiConfig } from 'wagmi';
+import Web3Modal from "web3modal"; 
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import Web3 from 'web3';
 import "./App.css";
-
 
 
 // Initialize Fleek SDK
@@ -38,8 +38,6 @@ function App() {
     const [nft, setNft] = useState<Nft | null>(null);
     const [nfts, setNfts] = useState<Nft[]>([]);
     const [dbIsInitialized, setDbIsInitialized] = useState(false);
-    
-    const { open } = createModal();
 
     const fetchNfts = async (account: string) => {
     try {
@@ -54,6 +52,31 @@ function App() {
     }
 };
 
+//WalletConnect
+const connectWallet = async () => {
+    const providerOptions = {
+        walletconnect: {
+            package: WalletConnectProvider, 
+            options: {
+                infuraId: import.meta.env.VITE_INFURA_ID  // Infura env variable
+            }
+        }
+    };
+
+    const web3Modal = new Web3Modal({
+        network: "mainnet", 
+        cacheProvider: true, 
+        providerOptions,
+    });
+
+    const provider = await web3Modal.connect();  
+    const web3 = new Web3(provider);
+    const accounts = await web3.eth.getAccounts();
+    setAccount(accounts[0]);
+    fetchNfts(accounts[0]);
+};
+
+// Weave DB 
     useEffect(() => {
         const initDb = async () => {
             await db.init();
@@ -172,7 +195,6 @@ function App() {
     };
 
     return (
-        <WagmiConfig config={wagmiConfig}>
         <Router>
             <div>
                 <nav>
@@ -189,7 +211,7 @@ function App() {
                     </ul>
                 </nav>
     
-                <button onClick={() => open()}>Connect Wallet</button>
+                <button onClick={connectWallet}>Connect Wallet</button>
 
                 <Routes>
                     <Route path="/explorer" element={<Explorer />} />
@@ -253,7 +275,6 @@ function App() {
                 </Routes>
             </div>
         </Router>
-        </WagmiConfig>
     );
     
 
