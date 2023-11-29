@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { FleekSdk, ApplicationAccessTokenService } from '@fleekxyz/sdk';
 import ReactDOMServer from 'react-dom/server';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
@@ -19,14 +19,6 @@ const applicationService = new ApplicationAccessTokenService({
 });
 const fleekSdk = new FleekSdk({ accessTokenService: applicationService });
 
-// Initialize WeaveDB
-const db = new WeaveDB({ contractTxId: WEAVEDB_CONTRACT });  
-// Create an async function to initialize the database
-async function initDb() {
-    await db.init();
-}
-// Call the function
-initDb();
 
 function App() {
     // State hooks
@@ -38,6 +30,7 @@ function App() {
     const [nft, setNft] = useState<Nft | null>(null);
     const [nfts, setNfts] = useState<Nft[]>([]);
     const [dbIsInitialized, setDbIsInitialized] = useState(false);
+    const dbRef = useRef<WeaveDB | null>(null);
 
     const fetchNfts = async (account: string) => {
     try {
@@ -79,8 +72,12 @@ const connectWallet = async () => {
 // Weave DB 
     useEffect(() => {
         const initDb = async () => {
-            await db.init();
-            setDbIsInitialized(true);
+            // Initialize db here and store it in the ref
+            dbRef.current = new WeaveDB({ contractTxId: WEAVEDB_CONTRACT });
+            if (dbRef.current) {
+                await dbRef.current.init();
+                setDbIsInitialized(true);
+            }
         };
 
         initDb();
@@ -153,6 +150,7 @@ const connectWallet = async () => {
         const blob = await response.blob();
         const arrayBuffer = await new Response(blob).arrayBuffer();
         const uploadTimestamp = new Date().getTime();
+
         
         const files = [
           { path: htmlFile.name, content: await htmlFile.arrayBuffer() },
@@ -177,15 +175,19 @@ const connectWallet = async () => {
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
             };
-            await db.add(profileInfo, WEAVEDB_COLLECTION);  
-
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setIsLoading(false);
+            if (dbRef.current) {
+                await dbRef.current.add(profileInfo, WEAVEDB_COLLECTION);
+            } else {
+                console.error('db is not initialized');
             }
+
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
           
-        };
+    };
 
 
     // Function to reformat link
