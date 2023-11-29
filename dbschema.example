@@ -1,0 +1,79 @@
+{
+  "type": "object",
+  "required": [
+    "identifier",
+    "collection",
+    "contract",
+    "token_standard",
+    "name",
+    "description",
+    "image_url",
+    "metadata_url",
+    "created_at",
+    "updated_at",
+    "is_disabled",
+    "is_nsfw",
+    "profileName",
+    "bio",
+    "walletAddress",
+    "ipfsUrl",
+    "profilePicUrl",
+    "age"
+  ],
+  "properties": {
+    "identifier": {
+      "type": "string"
+    },
+    "collection": {
+      "type": "string"
+    },
+    "contract": {
+      "type": "string"
+    },
+    "token_standard": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "image_url": {
+      "type": "string"
+    },
+    "metadata_url": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string"
+    },
+    "is_disabled": {
+      "type": "boolean"
+    },
+    "is_nsfw": {
+      "type": "boolean"
+    },
+    "profileName": {
+      "type": "string"
+    },
+    "bio": {
+      "type": "string"
+    },
+    "walletAddress": {
+      "type": "string"
+    },
+    "ipfsUrl": {
+      "type": "string"
+    },
+    "profilePicUrl": {
+      "type": "string"
+    },
+    "age": {
+      "type": "number"
+    }
+  }
+}
