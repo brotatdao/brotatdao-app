@@ -1,7 +1,6 @@
-// WalletConnect.tsx
 import { createWeb3Modal as createWeb3ModalBase, defaultConfig } from '@web3modal/ethers5/react'
 
-const projectId = process.env.REACT_APP_WALLETCONNECT_ID!  // Ensure you have this env variable set
+const projectId = import.meta.env.VITE_WALLETCONNECT_ID
 
 const mainnet = {
   chainId: 1,
@@ -26,4 +25,4 @@ const createWeb3Modal = () => {
   });
 }
 
-export default createWeb3Modal;  // Export the createWeb3Modal function
+export default createWeb3Modal; 

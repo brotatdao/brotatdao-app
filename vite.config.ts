@@ -1,8 +1,34 @@
+// vite.config.ts
+
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
+import { Buffer } from 'buffer'
+import { createRequire } from 'module'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
-// https://vitejs.dev/config/
+const require = createRequire(import.meta.url)
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    nodePolyfills(),
+  ],
   base: "./",
+  resolve: {
+    alias: {
+      'stream': 'stream-browserify',
+      'buffer': 'buffer/',
+      'util': 'util',
+    },
+  },
+  define: {
+    'process.env': {},
+    'process.browser': true,
+    'Buffer': Buffer,
+  },
+  build: {
+    rollupOptions: {
+      external: ['buffer', 'util', 'stream'],
+    },
+  },
 })

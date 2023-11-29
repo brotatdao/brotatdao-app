@@ -4,23 +4,23 @@ import ReactDOMServer from 'react-dom/server';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Explorer from './pages/Explorer/Explorer';
 import ProfileCard from './components/ProfileCard';
-import Web3 from 'web3';
-import Web3Modal from "web3modal"; 
-import WalletConnectProvider from "@walletconnect/web3-provider";
+import { WEAVEDB_CONTRACT, WEAVEDB_COLLECTION } from "./components/Constants";
 import { listNftsByAccount } from './components/OpenSea';
 import WeaveDB from "weavedb-sdk";
+import Web3Modal from "web3modal"; 
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import Web3 from 'web3';
 import "./App.css";
-
 
 
 // Initialize Fleek SDK
 const applicationService = new ApplicationAccessTokenService({
-    clientId: process.env.REACT_APP_FLEEK_CLIENT_ID!,  // Fleek env variable
+    clientId: import.meta.env.VITE_FLEEK_CLIENT_ID!,  // Fleek env variable
 });
 const fleekSdk = new FleekSdk({ accessTokenService: applicationService });
 
 // Initialize WeaveDB
-const db = new WeaveDB({ contractTxId: process.env.REACT_APP_WEAVEDB_CONTRACT! });  //WeaveDB contract env variable
+const db = new WeaveDB({ contractTxId: WEAVEDB_CONTRACT });  
 // Create an async function to initialize the database
 async function initDb() {
     await db.init();
@@ -38,53 +38,59 @@ function App() {
     const [nft, setNft] = useState<Nft | null>(null);
     const [nfts, setNfts] = useState<Nft[]>([]);
     const [dbIsInitialized, setDbIsInitialized] = useState(false);
-    
+
     const fetchNfts = async (account: string) => {
-        try {
-            const data = await listNftsByAccount(account);
+    try {
+        const data = await listNftsByAccount(account);
+        if (data && data.nfts) {
             setNfts(data.nfts);
-        } catch (error) {
-            alert((error as Error).message);
+        } else {
+            console.error('Unexpected response format from OpenSea API:', data);
+        }
+    } catch (error) {
+        alert((error as Error).message);
+    }
+};
+
+//WalletConnect
+const connectWallet = async () => {
+    const providerOptions = {
+        walletconnect: {
+            package: WalletConnectProvider, 
+            options: {
+                infuraId: import.meta.env.VITE_INFURA_ID  // Infura env variable
+            }
         }
     };
 
-    const connectWallet = async () => {
-        const providerOptions = {
-            walletconnect: {
-                package: WalletConnectProvider, 
-                options: {
-                    infuraId: process.env.REACT_APP_INFURA_ID  // Infura env variable
-                }
-            }
-        };
-    
-        const web3Modal = new Web3Modal({
-            network: "mainnet", 
-            cacheProvider: true, 
-            providerOptions,
-        });
-    
-        const provider = await web3Modal.connect();  
-        const web3 = new Web3(provider);
-        const accounts = await web3.eth.getAccounts();
-        setAccount(accounts[0]);
-        fetchNfts(accounts[0]);
-    };
+    const web3Modal = new Web3Modal({
+        network: "mainnet", 
+        cacheProvider: true, 
+        providerOptions,
+    });
 
+    const provider = await web3Modal.connect();  
+    const web3 = new Web3(provider);
+    const accounts = await web3.eth.getAccounts();
+    setAccount(accounts[0]);
+    fetchNfts(accounts[0]);
+};
+
+// Weave DB 
     useEffect(() => {
         const initDb = async () => {
             await db.init();
             setDbIsInitialized(true);
-            connectWallet();
         };
 
         initDb();
     }, []);
 
-    // If the database is not initialized, return null or a loading spinner
-    if (!dbIsInitialized) {
-        return null;  // Or return a loading spinner
-    }
+    useEffect(() => {
+        if (account) {
+            fetchNfts(account);
+        }
+    }, [account]);
 
     
     interface Nft {
@@ -171,7 +177,7 @@ function App() {
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
             };
-            await db.add(profileInfo, process.env.REACT_APP_WEAVEDB_COLLECTION!);  
+            await db.add(profileInfo, WEAVEDB_COLLECTION);  
 
             } catch (err) {
                 console.error(err);
@@ -205,6 +211,8 @@ function App() {
                     </ul>
                 </nav>
     
+                <button onClick={connectWallet}>Connect Wallet</button>
+
                 <Routes>
                     <Route path="/explorer" element={<Explorer />} />
                     <Route path="/upload" element={

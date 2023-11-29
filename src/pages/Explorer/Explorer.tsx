@@ -1,6 +1,7 @@
 // Explorer.tsx
 import React, { useEffect, useState, useCallback } from 'react';
 import WeaveDB from "weavedb-sdk";
+import { WEAVEDB_CONTRACT, WEAVEDB_COLLECTION, IPFS_GATEWAY } from '../../components/Constants';
 import './Explorer.css';
 
 type Profile = {
@@ -39,11 +40,11 @@ type Profile = {
     const [dbIsInitialized, setDbIsInitialized] = useState(false);
   
     // Initialize WeaveDB
-    const db = new WeaveDB({ contractTxId: process.env.REACT_APP_WEAVEDB_CONTRACT! });
+    const db = new WeaveDB({ contractTxId: WEAVEDB_CONTRACT });
   
     const fetchProfiles = useCallback(async () => {
       await db.init();
-      const result = await db.cget(process.env.REACT_APP_WEAVEDB_COLLECTION!, [ "age" ]); 
+      const result = await db.cget<Profile>(WEAVEDB_COLLECTION, [ "age" ]); 
       const profiles = result.map((doc: DocType) => doc.data);
       setSites(profiles);
     }, []);
@@ -69,7 +70,7 @@ type Profile = {
           {sites.map((profile, index) => (
               <div key={index} className="profile-card">
                   <div className="profile-photo">
-                      <img src={profile.profilePicUrl ? `https://${process.env.REACT_APP_IPFS_GATEWAY!}${profile.profilePicUrl.split('//')[1]}` : ''} alt="Profile Picture" />
+                      <img src={profile.profilePicUrl ? `https://${IPFS_GATEWAY}${profile.profilePicUrl.split('//')[1]}` : ''} alt="Profile Picture" />
                   </div>
                   <div className="profile-info">
                       <div className="name">{profile.name}</div>
