@@ -83,6 +83,24 @@ const connectWallet = async () => {
         initDb();
     }, []);
 
+// Add a useEffect hook for the 'accountsChanged' event
+    useEffect(() => {
+        if (window.ethereum) {
+            const handleAccountsChanged = (accounts: string[]) => {
+                // Time to reload interface with accounts[0]!
+                console.log(accounts[0]);
+                // Potentially call any functions that update the state of the app like setAccount(accounts[0]
+            };
+
+            window.ethereum.on('accountsChanged', handleAccountsChanged);
+
+            // Return a cleanup function to remove the event listener when the component unmounts
+            return () => {
+                window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+            };
+        }
+    }, []);    
+
     useEffect(() => {
         if (account) {
             fetchNfts(account);
