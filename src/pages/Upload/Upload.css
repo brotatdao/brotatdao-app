@@ -1,0 +1,44 @@
+.uploading-text {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .input-container, .button-container {
+    flex: 1;
+  }
+  
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .nft-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 16px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  .nft-item {
+    border: 1px solid #ddd;
+    padding: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .nft-item img {
+    max-width: 100%;
+    border-radius: 4px;
+  }
+  
+  .nft-item:hover, .nft-item.selected {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  

@@ -35,39 +35,34 @@ type Profile = {
     };
   };
 
-  const Explorer = () => {
-    const [sites, setSites] = useState<Profile[]>([]);
-    const [dbIsInitialized, setDbIsInitialized] = useState(false);
-  
-    // Initialize WeaveDB
-    const db = new WeaveDB({ contractTxId: WEAVEDB_CONTRACT });
-  
-    const fetchProfiles = useCallback(async () => {
-      await db.init();
-      const result = await db.cget<Profile>(WEAVEDB_COLLECTION, [ "age" ]); 
-      const profiles = result.map((doc: DocType) => doc.data);
-      setSites(profiles);
-    }, []);
-  
-    useEffect(() => {
-      const initDb = async () => {
-        await db.init();
-        setDbIsInitialized(true);
-        fetchProfiles();
-      };
-  
-      initDb();
-    }, [fetchProfiles]);
-  
-    // If the database is not initialized, return null or a loading spinner
-    if (!dbIsInitialized) {
-        return null;  // Or return a loading spinner
-    }
+  interface ExplorerProps {
+    dbRef: React.MutableRefObject<WeaveDB | null>;
+}
+
+const Explorer: React.FC<ExplorerProps> = ({ dbRef }) => {
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+
+  const fetchProfiles = async () => {
+      if (dbRef.current) {
+          const result = await dbRef.current.cget<Profile>(WEAVEDB_COLLECTION, ["age"]);
+          const fetchedProfiles = result.map((doc: DocType) => doc.data);
+          setProfiles(fetchedProfiles);
+      }
+  };
+
+  useEffect(() => {
+      fetchProfiles();
+  }, []);
+
+  if (!profiles.length) {
+      return <div>Loading...</div>; // Or a loading spinner component
+  }
+
     
-    return (
-      <div>
-          <h1>Explorer</h1>
-          {sites.map((profile, index) => (
+  return (
+    <div className="Explorer">
+        <h1>Profile Explorer</h1>
+        {profiles.map((profile, index) => (
               <div key={index} className="profile-card">
                   <div className="profile-photo">
                       <img src={profile.profilePicUrl ? `https://${IPFS_GATEWAY}${profile.profilePicUrl.split('//')[1]}` : ''} alt="Profile Picture" />
