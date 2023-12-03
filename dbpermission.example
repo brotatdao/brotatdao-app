@@ -1,0 +1,84 @@
+{
+    "let": [
+        [
+            "var",
+            "id",
+            [
+                "join",
+                ":",
+                [
+                    [
+                        "var",
+                        "resource.newData.article_id"
+                    ],
+                    [
+                        "var",
+                        "resource.newData.user_address"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    "allow create": {
+        "and": [
+            {
+                "!=": [
+                    [
+                        "var",
+                        "request.auth.signer"
+                    ],
+                    null
+                ]
+            },
+            {
+                "==": [
+                    [
+                        "var",
+                        "resource.id"
+                    ],
+                    [
+                        "var",
+                        "id"
+                    ]
+                ]
+            },
+            {
+                "==": [
+                    [
+                        "var",
+                        "request.auth.signer"
+                    ],
+                    [
+                        "var",
+                        "resource.newData.user_address"
+                    ]
+                ]
+            }
+        ]
+    },
+    "allow update": {
+        "and": [
+            {
+                "!=": [
+                    [
+                        "var",
+                        "request.auth.signer"
+                    ],
+                    null
+                ]
+            },
+            {
+                "==": [
+                    [
+                        "var",
+                        "request.auth.signer"
+                    ],
+                    [
+                        "var",
+                        "resource.setter"
+                    ]
+                ]
+            }
+        ]
+    }
+}
