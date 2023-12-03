@@ -75,5 +75,8 @@
     "age": {
       "type": "number"
     }
+    "twitterHandle": {
+      "type": "string"
+    }
   }
 }

@@ -31,4 +31,14 @@ export default defineConfig({
       external: ['buffer', 'util', 'stream'],
     },
   },
+  server: {
+    proxy: {
+      '/api/public_v1': {
+        target: 'https://namestone.xyz',
+        changeOrigin: true,
+        rewrite: (path) => path,
+      },
+    },
+  },
+  //possibly remove server config for production
 })

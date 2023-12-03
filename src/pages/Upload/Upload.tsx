@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { FleekSdk, ApplicationAccessTokenService } from '@fleekxyz/sdk';
+import axios from 'axios'
 import ProfileCard from '../../components/ProfileCard';
 import { listNftsByAccount } from '../../components/OpenSea';
-import { WEAVEDB_COLLECTION } from "../../components/Constants";
+import { WEAVEDB_COLLECTION, IPFS_GATEWAY } from "../../components/Constants";
 import WeaveDB from "weavedb-sdk";
 import './Upload.css';
 
@@ -39,6 +40,8 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef }) => {
     const [name, setName] = useState("");
     const [nfts, setNfts] = useState<Nft[]>([]);
     const [selectedNft, setSelectedNft] = useState<Nft | null>(null);
+    const [twitterHandle, setTwitterHandle] = useState("");
+
 
     useEffect(() => {
         if (account) {
@@ -78,6 +81,7 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef }) => {
         }
 
         const profilePicUrl = selectedNft.image_url;
+        const uploadTimestamp = new Date().getTime();
 
         const profileCardHtml = ReactDOMServer.renderToString(
             <ProfileCard name={name} bio={bio} profilePicUrl={profilePicUrl} />
@@ -99,7 +103,6 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef }) => {
         const response = await fetch(selectedNft.image_url);
         const blob = await response.blob();
         const arrayBuffer = await new Response(blob).arrayBuffer();
-        const uploadTimestamp = new Date().getTime();
 
         const files = [
             { path: htmlFile.name, content: await htmlFile.arrayBuffer() },
@@ -109,18 +112,27 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef }) => {
         try {
             setIsLoading(true);
             const uploadResult = await fleekSdk.ipfs().addAll(files);
-            setUploadLink(`ipfs://${uploadResult[0].cid}`);
-      
+
+            const contentHash = `ipfs://${uploadResult[0].cid}`;
+            const ipfsProfilePicUrl = `ipfs://${uploadResult[1].cid}`;
+
+            const ensSetSuccessfully = await setEnsSubdomain(contentHash, ipfsProfilePicUrl);
+            if (!ensSetSuccessfully) {
+                setIsLoading(false);
+                return;
+            }
+
             const profileInfo = {
                 ...selectedNft,
                 age: uploadTimestamp, 
-                ipfsUrl: `ipfs://${uploadResult[0].cid}`,
-                profilePicUrl: `ipfs://${uploadResult[1].cid}`,
+                ipfsUrl: contentHash,
+                profilePicUrl: ipfsProfilePicUrl,
                 profileName: name,
                 bio,
                 walletAddress: account,
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
+                twitterHandle,
             };
             if (dbRef.current) {
                 await dbRef.current.add(profileInfo, WEAVEDB_COLLECTION);
@@ -131,6 +143,39 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef }) => {
             console.error(err);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const setEnsSubdomain = async (contentHash: string, ipfsProfilePicUrl: string) => {
+        const domain = "brotatdao.eth";
+        const address = account;
+        const description = bio.substring(0, 255);
+
+        const payload = {
+            domain,
+            name,
+            address,
+            contenthash: contentHash,
+            text_records: {
+                "com.twitter": twitterHandle,
+                "description": description,
+                "avatar": ipfsProfilePicUrl,
+            },
+            single_claim: 0,
+        };
+
+        // remove proxy config for production - use env variables to check if the enviornment is production or development
+        
+        try {
+            const response = await axios.post('/api/public_v1/claim-name', payload, {
+                headers: { 'Authorization': import.meta.env.VITE_NAMESTONE }
+            });
+            console.log('ENS Subdomain Set:', response.data);
+            return true;
+        } catch (error) {
+            console.error('Error setting ENS subdomain:', error);
+            alert('Failed to set ENS subdomain. Please try again.');
+            return false;
         }
     };
 
@@ -164,6 +209,10 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef }) => {
                                 <div className="bio-container">
                                     <label className="styled-label" htmlFor="bio">Biography:</label>
                                     <textarea id="bio" onChange={handleBioChange} className="styled-textarea"></textarea>
+                                </div>
+                                <div className="twitter-handle-container">
+                                    <label className="styled-label" htmlFor="twitterHandle">Twitter Handle:</label>
+                                    <input id="twitterHandle" onChange={(e) => setTwitterHandle(e.target.value)} className="styled-input" />
                                 </div>
                                 <div className="button-container">
                                     <button
