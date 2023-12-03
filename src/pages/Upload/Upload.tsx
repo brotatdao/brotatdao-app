@@ -164,19 +164,23 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef }) => {
             single_claim: 0,
         };
 
-        // remove proxy config for production - use env variables to check if the enviornment is production or development
+        // check if production or development environment for proxy or direct api calls
+        const apiBaseUrl = import.meta.env.MODE === 'production' 
+            ? 'https://namestone.xyz/api/public_v1' 
+            : '/api/public_v1';
+
         
         try {
-            const response = await axios.post('/api/public_v1/claim-name', payload, {
+            const response = await axios.post(`${apiBaseUrl}/claim-name`, payload, {
                 headers: { 'Authorization': import.meta.env.VITE_NAMESTONE }
             });
             console.log('ENS Subdomain Set:', response.data);
             return true;
-        } catch (error) {
+            } catch (error) {
             console.error('Error setting ENS subdomain:', error);
             alert('Failed to set ENS subdomain. Please try again.');
             return false;
-        }
+            }              
     };
 
     const reformatLink = (link: string) => {

@@ -40,5 +40,4 @@ export default defineConfig({
       },
     },
   },
-  //possibly remove server config for production
 })
