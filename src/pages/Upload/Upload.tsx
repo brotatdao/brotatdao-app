@@ -31,9 +31,10 @@ interface Nft {
 interface UploadProps {
     account: string;
     dbRef: React.MutableRefObject<WeaveDB | null>;
+    identity: any;
 }
 
-const Upload: React.FC<UploadProps> = ({ account, dbRef }) => {
+const Upload: React.FC<UploadProps> = ({ account, dbRef, identity }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [uploadLink, setUploadLink] = useState("");
     const [bio, setBio] = useState("");
@@ -79,10 +80,10 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef }) => {
             alert("Please select an NFT, enter a name and biography");
             return;
         }
-
+    
         const profilePicUrl = selectedNft.image_url;
         const uploadTimestamp = new Date().getTime();
-
+    
         const profileCardHtml = ReactDOMServer.renderToString(
             <ProfileCard name={name} bio={bio} profilePicUrl={profilePicUrl} />
         );
@@ -97,31 +98,25 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef }) => {
             </body>
             </html>
         `;
-
+    
         const htmlFile = new File([htmlContent], "index.html", { type: 'text/html' });
-
+    
         const response = await fetch(selectedNft.image_url);
         const blob = await response.blob();
         const arrayBuffer = await new Response(blob).arrayBuffer();
-
+    
         const files = [
             { path: htmlFile.name, content: await htmlFile.arrayBuffer() },
             { path: selectedNft.image_url.split('/').pop()!, content: arrayBuffer },
         ];
-
+    
         try {
             setIsLoading(true);
             const uploadResult = await fleekSdk.ipfs().addAll(files);
-
+    
             const contentHash = `ipfs://${uploadResult[0].cid}`;
             const ipfsProfilePicUrl = `ipfs://${uploadResult[1].cid}`;
-
-            const ensSetSuccessfully = await setEnsSubdomain(contentHash, ipfsProfilePicUrl);
-            if (!ensSetSuccessfully) {
-                setIsLoading(false);
-                return;
-            }
-
+    
             const profileInfo = {
                 ...selectedNft,
                 age: uploadTimestamp, 
@@ -134,17 +129,36 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef }) => {
                 updated_at: new Date().toISOString(),
                 twitterHandle,
             };
-            if (dbRef.current) {
-                await dbRef.current.add(profileInfo, WEAVEDB_COLLECTION);
-            } else {
-                console.error('db is not initialized');
+    
+            // Check if dbRef.current and identity are valid
+        if (dbRef.current && identity) {
+            await dbRef.current.add(profileInfo, WEAVEDB_COLLECTION, identity);
+        } else {
+            console.error('Database not initialized or identity missing');
+            return;
+        }
+    console.log(identity)
+    
+        try {
+            const ensSetSuccessfully = await setEnsSubdomain(contentHash, ipfsProfilePicUrl);
+            if (!ensSetSuccessfully) {
+                setIsLoading(false);
+                return;
             }
         } catch (err) {
             console.error(err);
+            return;
         } finally {
             setIsLoading(false);
         }
+    } catch (err) {
+        console.error('Error during upload:', err);
+        alert('Upload failed. Please try again.');
+    } finally {
+        setIsLoading(false);
+    }
     };
+    
 
     const setEnsSubdomain = async (contentHash: string, ipfsProfilePicUrl: string) => {
         const domain = "brotatdao.eth";

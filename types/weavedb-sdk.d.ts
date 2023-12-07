@@ -16,7 +16,7 @@ declare class WeaveDB {
       };
     }[]
   >;
-  createTempAddress(address: string): Promise<any>;
+  createTempAddress(address: string | null, expiry?: number): Promise<{ identity: any }>;  //changed to add expiry
   delete(collection_name: string, doc_id: string, user?: IUser): Promise<any>;
   update<T>(
     data: T,
