@@ -1,10 +1,10 @@
 import React from "react";
 
 const ProfileCard: React.FC<{
-  name: string;
+  profileName: string;
   bio: string;
   profilePicUrl: string;
-}> = ({ name, bio, profilePicUrl }) => {
+}> = ({ profileName, bio, profilePicUrl }) => {
   return (
     <>
       <style>{`
@@ -60,7 +60,7 @@ const ProfileCard: React.FC<{
             <img src={profilePicUrl} alt="Profile Picture" />
           </div>
           <div className="profile-info">
-            <div className="name">{name}</div>
+            <div className="name">{profileName}</div>
             <div className="bio">{bio}</div>
           </div>
         </div>

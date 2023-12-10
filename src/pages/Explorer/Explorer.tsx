@@ -68,7 +68,7 @@ const Explorer: React.FC<ExplorerProps> = ({ dbRef }) => {
                       <img src={profile.profilePicUrl ? `https://${IPFS_GATEWAY}${profile.profilePicUrl.split('//')[1]}` : ''} alt="Profile Picture" />
                   </div>
                   <div className="profile-info">
-                      <div className="name">{profile.name}</div>
+                      <div className="profileName">{profile.profileName}</div>
                       <div className="bio">{profile.bio}</div>
                   </div>
               </div>

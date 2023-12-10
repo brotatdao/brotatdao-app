@@ -29,7 +29,7 @@ interface Nft {
 }
 
 interface UploadProps {
-    account: string;
+    account?: any;
     dbRef: React.MutableRefObject<WeaveDB | null>;
     identity: any;
 }
@@ -38,7 +38,7 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef, identity }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [uploadLink, setUploadLink] = useState("");
     const [bio, setBio] = useState("");
-    const [name, setName] = useState("");
+    const [profileName, setProfileName] = useState("");
     const [nfts, setNfts] = useState<Nft[]>([]);
     const [selectedNft, setSelectedNft] = useState<Nft | null>(null);
     const [twitterHandle, setTwitterHandle] = useState("");
@@ -71,12 +71,14 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef, identity }) => {
         setBio(event.target.value);
     };
 
-    const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setName(event.target.value);
+    const handleProfileNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setProfileName(event.target.value);
     };
 
+    
+
     const handleUpload = async () => {
-        if (!selectedNft || !bio || !name) {
+        if (!selectedNft || !bio || !profileName) {
             alert("Please select an NFT, enter a name and biography");
             return;
         }
@@ -85,7 +87,7 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef, identity }) => {
         const uploadTimestamp = new Date().getTime();
     
         const profileCardHtml = ReactDOMServer.renderToString(
-            <ProfileCard name={name} bio={bio} profilePicUrl={profilePicUrl} />
+            <ProfileCard profileName={profileName} bio={bio} profilePicUrl={profilePicUrl} />
         );
     
         const htmlContent = `
@@ -122,7 +124,7 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef, identity }) => {
                 age: uploadTimestamp, 
                 ipfsUrl: contentHash,
                 profilePicUrl: ipfsProfilePicUrl,
-                profileName: name,
+                profileName,
                 bio,
                 walletAddress: account,
                 created_at: new Date().toISOString(),
@@ -130,14 +132,14 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef, identity }) => {
                 twitterHandle,
             };
     
-            // Check if dbRef.current and identity are valid
+
+        // Check if dbRef.current and identity are valid
         if (dbRef.current && identity) {
+            // Perform database operations using identity
             await dbRef.current.add(profileInfo, WEAVEDB_COLLECTION, identity);
         } else {
             console.error('Database not initialized or identity missing');
-            return;
         }
-    console.log(identity)
     
         try {
             const ensSetSuccessfully = await setEnsSubdomain(contentHash, ipfsProfilePicUrl);
@@ -167,7 +169,7 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef, identity }) => {
 
         const payload = {
             domain,
-            name,
+            name: profileName,
             address,
             contenthash: contentHash,
             text_records: {
@@ -221,8 +223,8 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef, identity }) => {
                                     ))}
                                 </div>
                                 <div className="name-container">
-                                    <label className="styled-label" htmlFor="name">Name your NFT:</label>
-                                    <input id="name" onChange={handleNameChange} className="styled-input" />
+                                    <label className="styled-label" htmlFor="profileName">Name your NFT:</label>
+                                    <input id="name" onChange={handleProfileNameChange} className="styled-input" />
                                 </div>
                                 <div className="bio-container">
                                     <label className="styled-label" htmlFor="bio">Biography:</label>

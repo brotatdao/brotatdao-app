@@ -32,49 +32,37 @@ const { open } = useWeb3Modal();
 const App = () => {
     const [identity, setIdentity] = useState(null);
     const dbRef = useRef<WeaveDB | null>(null);
+    const [account, setAccount] = useState<string | null | undefined>(null);
+
 
     // Initialize WeaveDB
     useEffect(() => {
         const initDb = async () => {
             dbRef.current = new WeaveDB({ contractTxId: WEAVEDB_CONTRACT });
-            if (dbRef.current) {
-                await dbRef.current.init();
-            }
+            await dbRef.current?.init();
         };
-
         initDb();
-    }, []);
-
-    // Create a temporary address for WeaveDB
-    useEffect(() => {
-        const createTempAddress = async () => {
-            if (dbRef.current) {
-                const expiry = 60 * 60 * 24 * 7; // Set expiry to one week
-                const tempIdentity = await dbRef.current.createTempAddress(null, expiry);
-                setIdentity(tempIdentity.identity);
-            }
-        };
-
-        createTempAddress();
     }, []);
 
     const InnerApp = () => {
         const { address } = useAccount();
         const { disconnect } = useDisconnect();
 
+        // Update the account state when the address changes
         useEffect(() => {
+            setAccount(address); // Set the connected wallet address to the account state
+
             const createTempAddress = async () => {
                 if (dbRef.current && address && !identity) {
-                    const expiry = 60 * 60 * 24 * 7; // Set expiry to one week
-                    const tempIdentity = await dbRef.current.createTempAddress(null, expiry);
-                    console.log('Temp identity:', tempIdentity.identity); // Log to fix possible error.
+                    const tempIdentity = await dbRef.current.createTempAddress(null);
+                    console.log('Temp identity:', tempIdentity.identity);
                     setIdentity(tempIdentity.identity);
                 }
             };
-        
-            createTempAddress();
-        }, [address, identity]);
 
+            createTempAddress();
+        }, [address]);
+        
         return (
             <Router>
                 <div>
@@ -93,8 +81,8 @@ const App = () => {
                     )}
 
                     <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/upload" element={<Upload account={address || ''} dbRef={dbRef} identity={identity} />} />
+                    <Route path="/" element={<Home />} />
+                        <Route path="/upload" element={<Upload dbRef={dbRef} identity={identity} account={account} />} />
                         <Route path="/explorer" element={<Explorer dbRef={dbRef} />} />
                     </Routes>
                 </div>
