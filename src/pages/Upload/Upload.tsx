@@ -4,8 +4,9 @@ import { FleekSdk, ApplicationAccessTokenService } from '@fleekxyz/sdk';
 import axios from 'axios'
 import ProfileCard from '../../components/ProfileCard';
 import { listNftsByAccount } from '../../components/OpenSea';
-import { WEAVEDB_COLLECTION, IPFS_GATEWAY } from "../../components/Constants";
-import WeaveDB from "weavedb-sdk";
+import { WEAVEDB_COLLECTION } from "../../components/Constants";
+import useWallet from '../../components/useWallet';
+import { useDisconnect } from 'wagmi';
 import './Upload.css';
 
 const applicationService = new ApplicationAccessTokenService({
@@ -28,20 +29,16 @@ interface Nft {
     is_nsfw: boolean;
 }
 
-interface UploadProps {
-    account?: any;
-    dbRef: React.MutableRefObject<WeaveDB | null>;
-    identity: any;
-}
-
-const Upload: React.FC<UploadProps> = ({ account, dbRef, identity }) => {
+const Upload: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const [uploadLink, setUploadLink] = useState("");
+    const [uploadLink] = useState("");
     const [bio, setBio] = useState("");
     const [profileName, setProfileName] = useState("");
     const [nfts, setNfts] = useState<Nft[]>([]);
     const [selectedNft, setSelectedNft] = useState<Nft | null>(null);
     const [twitterHandle, setTwitterHandle] = useState("");
+    const { account, identity, db, open } = useWallet();
+    const { disconnect } = useDisconnect();
 
 
     useEffect(() => {
@@ -75,7 +72,6 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef, identity }) => {
         setProfileName(event.target.value);
     };
 
-    
 
     const handleUpload = async () => {
         if (!selectedNft || !bio || !profileName) {
@@ -133,13 +129,18 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef, identity }) => {
             };
     
 
-        // Check if dbRef.current and identity are valid
-        if (dbRef.current && identity) {
-            // Perform database operations using identity
-            await dbRef.current.add(profileInfo, WEAVEDB_COLLECTION, identity);
-        } else {
-            console.error('Database not initialized or identity missing');
-        }
+        // Check if db and identity are valid
+        if (db && identity) {
+      try {
+        // Perform database operations using identity
+        await db.add(profileInfo, WEAVEDB_COLLECTION, identity);
+        console.log('Data added to WeaveDB:', profileInfo);
+      } catch (error) {
+        console.error('Error adding data to WeaveDB:', error);
+      }
+    } else {
+      console.error('Database not initialized or identity missing', { db, identity });
+    }
     
         try {
             const ensSetSuccessfully = await setEnsSubdomain(contentHash, ipfsProfilePicUrl);
@@ -206,13 +207,22 @@ const Upload: React.FC<UploadProps> = ({ account, dbRef, identity }) => {
 
     return (
         <div className="Upload">
-            <header className="App-header">
-                {isLoading ? (
-                    <div className="uploading-text">Uploading...</div>
-                ) : (
-                    <>
-                        <p className="title-text">Face Fables :)</p>
-                        <div className="flex-container">
+        <header className="App-header">
+            {isLoading ? (
+                <div className="uploading-text">Uploading...</div>
+            ) : (
+                <>
+                    <p className="title-text">Face Fables :)</p>
+                    {/* Connect and Disconnect Buttons */}
+                    <div className="button-container">
+                        <button className="styled-button" onClick={() => open()}>
+                            Connect Wallet
+                        </button>
+                        <button className="styled-button" onClick={() => disconnect()}>
+                            Disconnect Wallet
+                        </button>
+                    </div>
+                    <div className="flex-container">
                             <div className="input-container">
                                 <div className="nft-grid">
                                     {nfts.map((nft, index) => (

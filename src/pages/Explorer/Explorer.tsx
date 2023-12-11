@@ -35,24 +35,31 @@ type Profile = {
     };
   };
 
-  interface ExplorerProps {
-    dbRef: React.MutableRefObject<WeaveDB | null>;
-}
+  const Explorer: React.FC = () => {
+    const [db, setDb] = useState<WeaveDB | null>(null);
+    const [profiles, setProfiles] = useState<Profile[]>([]);
+  
+    // Initialize WeaveDB
+    useEffect(() => {
+      const initDb = async () => {
+        const _db = new WeaveDB({ contractTxId: WEAVEDB_CONTRACT });
+        await _db.init();
+        setDb(_db);
+      };
+      initDb();
+    }, []);
 
-const Explorer: React.FC<ExplorerProps> = ({ dbRef }) => {
-  const [profiles, setProfiles] = useState<Profile[]>([]);
-
-  const fetchProfiles = async () => {
-      if (dbRef.current) {
-          const result = await dbRef.current.cget<Profile>(WEAVEDB_COLLECTION, ["age"]);
+    const fetchProfiles = useCallback(async () => {
+      if (db) {
+          const result = await db.cget<Profile>(WEAVEDB_COLLECTION, ["age"]);
           const fetchedProfiles = result.map((doc: DocType) => doc.data);
           setProfiles(fetchedProfiles);
       }
-  };
+  }, [db]);
 
   useEffect(() => {
-      fetchProfiles();
-  }, []);
+    fetchProfiles();
+}, [fetchProfiles]);
 
   if (!profiles.length) {
       return <div>Loading...</div>; // Or a loading spinner component
