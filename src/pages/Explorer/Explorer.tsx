@@ -22,7 +22,6 @@ type Profile = {
     walletAddress: string;
     ipfsUrl: string;
     profilePicUrl: string;
-    age: number;
   };
   
   type DocType = {
@@ -51,7 +50,7 @@ type Profile = {
 
     const fetchProfiles = useCallback(async () => {
       if (db) {
-          const result = await db.cget<Profile>(WEAVEDB_COLLECTION, ["age"]);
+          const result = await db.cget<Profile>(WEAVEDB_COLLECTION, ["created_at"]);
           const fetchedProfiles = result.map((doc: DocType) => doc.data);
           setProfiles(fetchedProfiles);
       }

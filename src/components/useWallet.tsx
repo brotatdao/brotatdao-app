@@ -25,10 +25,11 @@ createWeb3Modal({ wagmiConfig, projectId, chains });
 
 const useWallet = () => {
   const [account, setAccount] = useState<string | null | undefined>(null);
-  const [identity, setIdentity] = useState(null);
+  const [identity, setIdentity] = useState<string | null>(null);
   const [db, setDb] = useState<WeaveDB | null>(null);
   const { open } = useWeb3Modal();
   const { address } = useAccount();
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Initialize WeaveDB
   useEffect(() => {
@@ -51,21 +52,33 @@ const useWallet = () => {
   }, [address]);
 
   useEffect(() => {
-    const createTempAddress = async () => {
-      if (db && account && !identity) {
+    const loadOrCreateTempIdentity = async () => {
+      const savedIdentity = sessionStorage.getItem('tempIdentity'); // Check if identity is stored in session
+      if (!savedIdentity && db && account && !identity) {
+        // Create only if it's not already created
         try {
           const tempIdentity = await db.createTempAddress(null);
-          setIdentity(tempIdentity.identity);
+          sessionStorage.setItem('tempIdentity', JSON.stringify(tempIdentity)); // Save the whole object to session storage
+          setIdentity(tempIdentity.identity); // Set the new identity
           console.log('Temporary identity created:', tempIdentity.identity);
         } catch (error) {
           console.error('Error creating temporary address:', error);
         }
+      } else if (savedIdentity) {
+        setIdentity(JSON.parse(savedIdentity).identity); // Parse the saved identity back into an object
       }
     };
-    createTempAddress();
+    loadOrCreateTempIdentity();
   }, [db, account]);
 
-  return { account, identity, db, open };
+  const initiateConnection = async () => {
+    if (!isInitialized) {
+      open(); // Trigger wallet connection
+      setIsInitialized(true); // Set flag after initialization
+    }
+  };
+
+  return { account, identity, db, initiateConnection }; // Return the new method
 };
 
 export {wagmiConfig};
