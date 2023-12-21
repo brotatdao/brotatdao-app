@@ -71,7 +71,7 @@ type Profile = {
         {profiles.map((profile, index) => (
               <div key={index} className="profile-card">
                   <div className="profile-photo">
-                      <img src={profile.profilePicUrl ? `https://${IPFS_GATEWAY}${profile.profilePicUrl.split('//')[1]}` : ''} alt="Profile Picture" />
+                      <img src={profile.image_url} alt="Profile Picture" />
                   </div>
                   <div className="profile-info">
                       <div className="profileName">{profile.profileName}</div>
