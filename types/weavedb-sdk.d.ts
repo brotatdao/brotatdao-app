@@ -3,7 +3,7 @@ declare class WeaveDB {
   init(): Promise<void>;
   createTempAddress(address: string): Promise<any>;
   getAddressLink(address: string): Promise<any>;
-  add(data: any, collection_name: string, user?: IUser): Promise<any>;
+  add(data: any, collection_name: string, user?: string): Promise<any>;
   get<T>(...args: Parameters<GetFunction>): Promise<T>;
   cget<T>(...args: Parameters<GetFunction>): Promise<
     {

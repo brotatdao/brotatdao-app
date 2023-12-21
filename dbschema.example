@@ -1,24 +1,13 @@
 {
     "type": "object",
     "required": [
-        "identifier",
-        "collection",
         "contract",
-        "token_standard",
-        "name",
-        "description",
         "image_url",
-        "metadata_url",
-        "created_at",
-        "updated_at",
-        "is_disabled",
-        "is_nsfw",
         "profileName",
         "bio",
         "walletAddress",
         "ipfsUrl",
-        "profilePicUrl",
-        "age"
+        "profilePicUrl"
     ],
     "properties": {
         "identifier": {
@@ -45,17 +34,14 @@
         "metadata_url": {
             "type": "string"
         },
-        "created_at": {
-            "type": "string"
-        },
-        "updated_at": {
-            "type": "string"
-        },
         "is_disabled": {
             "type": "boolean"
         },
         "is_nsfw": {
             "type": "boolean"
+        },
+        "opensea_url": {
+            "type": "string"
         },
         "profileName": {
             "type": "string"
@@ -72,8 +58,11 @@
         "profilePicUrl": {
             "type": "string"
         },
-        "age": {
-            "type": "number"
+        "created_at": {
+            "type": "string"
+        },
+        "updated_at": {
+            "type": "string"
         },
         "twitterHandle": {
             "type": "string"

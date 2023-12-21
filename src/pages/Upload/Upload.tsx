@@ -23,10 +23,9 @@ interface Nft {
     description: string;
     image_url: string;
     metadata_url: string;
-    created_at: string;
-    updated_at: string;
     is_disabled: boolean;
     is_nsfw: boolean;
+    opensea_url: string;
 }
 
 const Upload: React.FC = () => {
@@ -37,7 +36,7 @@ const Upload: React.FC = () => {
     const [nfts, setNfts] = useState<Nft[]>([]);
     const [selectedNft, setSelectedNft] = useState<Nft | null>(null);
     const [twitterHandle, setTwitterHandle] = useState("");
-    const { account, identity, db, open } = useWallet();
+    const { account, identity, db, initiateConnection } = useWallet();
     const { disconnect } = useDisconnect();
 
 
@@ -80,7 +79,7 @@ const Upload: React.FC = () => {
         }
     
         const profilePicUrl = selectedNft.image_url;
-        const uploadTimestamp = new Date().getTime();
+
     
         const profileCardHtml = ReactDOMServer.renderToString(
             <ProfileCard profileName={profileName} bio={bio} profilePicUrl={profilePicUrl} />
@@ -117,7 +116,6 @@ const Upload: React.FC = () => {
     
             const profileInfo = {
                 ...selectedNft,
-                age: uploadTimestamp, 
                 ipfsUrl: contentHash,
                 profilePicUrl: ipfsProfilePicUrl,
                 profileName,
@@ -131,16 +129,17 @@ const Upload: React.FC = () => {
 
         // Check if db and identity are valid
         if (db && identity) {
-      try {
-        // Perform database operations using identity
-        await db.add(profileInfo, WEAVEDB_COLLECTION, identity);
-        console.log('Data added to WeaveDB:', profileInfo);
-      } catch (error) {
-        console.error('Error adding data to WeaveDB:', error);
-      }
-    } else {
-      console.error('Database not initialized or identity missing', { db, identity });
-    }
+            try {
+            // Perform database operations using identity
+            await db.add(profileInfo, WEAVEDB_COLLECTION, identity);
+            console.log('Data added to WeaveDB:', profileInfo); 
+            } catch (error) {
+            console.error('Error adding data to WeaveDB:', error);
+            }
+        } else {
+            console.error('Database not initialized or identity missing', { db, identity });
+            alert('Database not initialized or identity missing. Please try again.');
+        }
     
         try {
             const ensSetSuccessfully = await setEnsSubdomain(contentHash, ipfsProfilePicUrl);
@@ -215,7 +214,7 @@ const Upload: React.FC = () => {
                     <p className="title-text">Face Fables :)</p>
                     {/* Connect and Disconnect Buttons */}
                     <div className="button-container">
-                        <button className="styled-button" onClick={() => open()}>
+                        <button className="styled-button" onClick={initiateConnection}>
                             Connect Wallet
                         </button>
                         <button className="styled-button" onClick={() => disconnect()}>
@@ -224,7 +223,7 @@ const Upload: React.FC = () => {
                     </div>
                     <div className="flex-container">
                             <div className="input-container">
-                                <div className="nft-grid">
+                                <div> className="nft-grid"
                                     {nfts.map((nft, index) => (
                                         <div key={index} className="nft-item" onClick={() => handleNftSelect(nft)}>
                                             <img src={nft.image_url} alt={nft.name} />
