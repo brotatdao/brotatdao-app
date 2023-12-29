@@ -6,6 +6,22 @@ import Explorer from './pages/Explorer/Explorer';
 import { WagmiConfig } from 'wagmi';
 import { wagmiConfig } from './components/useWallet'; // Update the path as necessary
 import "./App.css";
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE,
+  authDomain: "brotatdao.firebaseapp.com",
+  projectId: "brotatdao",
+  storageBucket: "brotatdao.appspot.com",
+  messagingSenderId: "877410774360",
+  appId: "1:877410774360:web:be6b8f80aa74ae4c0bc92d",
+  measurementId: "G-JK4PS0HWGX"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 const App = () => {
     return (
