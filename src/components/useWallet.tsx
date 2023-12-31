@@ -6,8 +6,6 @@ import { useAccount } from 'wagmi';
 import { mainnet, sepolia } from 'viem/chains';
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { Web3Provider } from "@ethersproject/providers";
-
-// Import Firestore and Firebase app instance from App.tsx
 import { db, firebaseApp } from '../App';
 
 // Get projectId from your environment variables
@@ -81,38 +79,49 @@ const useWallet = () => {
     }
   };
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   const authenticateWithMoralis = async () => {
-    if (address) {
-      console.log('Initializing WalletConnectProvider...');
-      const provider = new WalletConnectProvider({
-        rpc: {
-          1: 'https://mainnet.infura.io/v3/1f2fbd3ff31e4f4f9cf0901c26d85363',
-          11155111: 'https://sepolia.infura.io/v3/1f2fbd3ff31e4f4f9cf0901c26d85363'
-        }
-      });
-
-      try {
-        await provider.enable();
-        console.log('Provider enabled, requesting message...');
-
-        const chainId = 1; // Mainnet, adjust as needed
-        const messageData = await requestMessage(address, 'evm', chainId);
-
-        // TODO: User needs to sign this message with their wallet
-        // const signature = await signMessageWithWallet(messageData);
-
-        // const tokenData = await issueToken(messageData, signature);
-        // TODO: Handle the received token for user authentication
-
-      } catch (error) {
-        console.error('Error during authentication:', error);
-      }
+    if (address && !isAuthenticated) {
+     console.log('Initializing WalletConnectProvider...');
+     const provider = new WalletConnectProvider({
+       rpc: {
+         1: 'https://mainnet.infura.io/v3/1f2fbd3ff31e4f4f9cf0901c26d85363',
+         11155111: 'https://sepolia.infura.io/v3/1f2fbd3ff31e4f4f9cf0901c26d85363'
+       }
+     });
+   
+     try {
+       // Enable the provider
+       await provider.enable();
+       console.log('Provider enabled, requesting message...');
+   
+       // Create a new Web3Provider using the WalletConnectProvider
+       const web3Provider = new Web3Provider(provider);
+   
+       // TODO: Use the web3Provider in your application
+   
+       const chainId = 1; // Mainnet, adjust as needed
+       const messageData = await requestMessage(address, 'evm', chainId);
+   
+       // TODO: User needs to sign this message with their wallet
+       // const signature = await signMessageWithWallet(messageData);
+   
+       // const tokenData = await issueToken(messageData, signature);
+       // TODO: Handle the received token for user authentication
+   
+       // Set isAuthenticated to true
+       setIsAuthenticated(true);
+   
+     } catch (error) {
+       console.error('Error during authentication:', error);
+     }
     }
-  };
+   };
 
-  useEffect(() => {
+   useEffect(() => {
     authenticateWithMoralis();
-  }, [address]);
+   }, [isAuthenticated]);   
 
   return { account, initiateConnection, getUserData, setUserData };
 };
