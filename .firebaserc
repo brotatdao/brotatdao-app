@@ -1,5 +1,13 @@
 {
   "projects": {
     "default": "brotatdao"
+  },
+  "targets": {},
+  "etags": {
+    "brotatdao": {
+      "extensionInstances": {
+        "moralis-auth": "69cc5e7cbb1e8aef57cf1699d9030db051ffeda4a1c720a84b0df604ba72efea"
+      }
+    }
   }
 }

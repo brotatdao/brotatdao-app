@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { FleekSdk, ApplicationAccessTokenService } from '@fleekxyz/sdk';
-import axios from 'axios'
+import axios from 'axios';
 import ProfileCard from '../../components/ProfileCard';
 import { listNftsByAccount } from '../../components/OpenSea';
-import { WEAVEDB_COLLECTION } from "../../components/Constants";
 import useWallet from '../../components/useWallet';
 import { useDisconnect } from 'wagmi';
 import './Upload.css';
+import { db } from '../../App';
+import { doc, setDoc } from 'firebase/firestore';
 
 const applicationService = new ApplicationAccessTokenService({
     clientId: import.meta.env.VITE_FLEEK_CLIENT_ID!,
 });
-const fleekSdk = new FleekSdk({ accessTokenService: applicationService });
+const fleekSdk = new FleekSdk({ accessTokenService: applicationService }); //Initialize Fleek
 
 interface Nft {
     identifier: string;
@@ -30,15 +31,28 @@ interface Nft {
 
 const Upload: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const [uploadLink] = useState("");
     const [bio, setBio] = useState("");
     const [profileName, setProfileName] = useState("");
     const [nfts, setNfts] = useState<Nft[]>([]);
     const [selectedNft, setSelectedNft] = useState<Nft | null>(null);
     const [twitterHandle, setTwitterHandle] = useState("");
-    const { account, identity, db, initiateConnection } = useWallet();
+    const { account, initiateConnection } = useWallet();
     const { disconnect } = useDisconnect();
+    const [isConnected, setIsConnected] = useState(false);
 
+    // Update isConnected when account changes
+    useEffect(() => {
+        setIsConnected(!!account);
+    }, [account]);
+
+    // Toggle connection function
+    const toggleConnection = () => {
+        if (isConnected) {
+            disconnect();
+        } else {
+            initiateConnection();
+        }
+    };
 
     useEffect(() => {
         if (account) {
@@ -114,6 +128,7 @@ const Upload: React.FC = () => {
             const contentHash = `ipfs://${uploadResult[0].cid}`;
             const ipfsProfilePicUrl = `ipfs://${uploadResult[1].cid}`;
     
+        if (account) {
             const profileInfo = {
                 ...selectedNft,
                 ipfsUrl: contentHash,
@@ -126,20 +141,14 @@ const Upload: React.FC = () => {
                 twitterHandle,
             };
     
-
-        // Check if db and identity are valid
-        if (db && identity) {
             try {
-            // Perform database operations using identity
-            await db.add(profileInfo, WEAVEDB_COLLECTION, identity);
-            console.log('Data added to WeaveDB:', profileInfo); 
+                await setDoc(doc(db, 'nftProfiles', selectedNft.identifier), profileInfo);
+                console.log('Profile uploaded to Firestore:', profileInfo);
             } catch (error) {
-            console.error('Error adding data to WeaveDB:', error);
+                console.error('Error uploading profile to Firestore:', error);
             }
-        } else {
-            console.error('Database not initialized or identity missing', { db, identity });
-            alert('Database not initialized or identity missing. Please try again.');
         }
+
     
         try {
             const ensSetSuccessfully = await setEnsSubdomain(contentHash, ipfsProfilePicUrl);
@@ -214,13 +223,10 @@ const Upload: React.FC = () => {
                     <p className="title-text">Face Fables :)</p>
                     {/* Connect and Disconnect Buttons */}
                     <div className="button-container">
-                        <button className="styled-button" onClick={initiateConnection}>
-                            Connect Wallet
-                        </button>
-                        <button className="styled-button" onClick={() => disconnect()}>
-                            Disconnect Wallet
-                        </button>
-                    </div>
+                    <button className="styled-button" onClick={toggleConnection}>
+                        {isConnected ? 'Disconnect Wallet' : 'Connect Wallet'}
+                    </button>
+                </div>
                     <div className="flex-container">
                             <div className="input-container">
                                 <div> className="nft-grid"
@@ -250,16 +256,6 @@ const Upload: React.FC = () => {
                                     >
                                         Upload
                                     </button>
-                                    {uploadLink && (
-                                        <a
-                                            className="upload-link"
-                                            href={reformatLink(uploadLink)}
-                                            target="__blank"
-                                        >
-                                            <b>Copy this link to your subdomain content hash in the ENS app : <br /></b>
-                                            {reformatLink(uploadLink)}
-                                        </a>
-                                    )}
                                 </div>
                             </div>
                         </div>
