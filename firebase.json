@@ -10,5 +10,8 @@
       "**/.*",
       "**/node_modules/**"
     ]
+  },
+  "extensions": {
+    "moralis-auth": "moralis/moralis-auth@0.1.7"
   }
 }

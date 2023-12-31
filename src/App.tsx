@@ -1,16 +1,18 @@
-// App.tsx
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home/Home';
 import Upload from './pages/Upload/Upload';
 import Explorer from './pages/Explorer/Explorer';
 import { WagmiConfig } from 'wagmi';
-import { wagmiConfig } from './components/useWallet'; // Update the path as necessary
+import { wagmiConfig } from './components/useWallet'; 
 import "./App.css";
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 
+// Firebase imports
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+
+// Firebase configuration (use your own configuration)
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE,
+  apiKey: "AIzaSyBDR4vkS-1fd0VeeyxlcGQXJNLBdYrK5zc",
   authDomain: "brotatdao.firebaseapp.com",
   projectId: "brotatdao",
   storageBucket: "brotatdao.appspot.com",
@@ -19,30 +21,33 @@ const firebaseConfig = {
   measurementId: "G-JK4PS0HWGX"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// Initialize Firebase then Firestore
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+
+// Export Firebase services
+export { firebaseApp, db };
 
 const App = () => {
     return (
         <WagmiConfig config={wagmiConfig}>
-        <Router>
-            <div>
-                <nav>
-                    <ul>
-                        <li><Link to="/">Home</Link></li>
-                        <li><Link to="/upload">Upload</Link></li>
-                        <li><Link to="/explorer">Explorer</Link></li>
-                    </ul>
-                </nav>
+            <Router>
+                <div>
+                    <nav>
+                        <ul>
+                            <li><Link to="/">Home</Link></li>
+                            <li><Link to="/upload">Upload</Link></li>
+                            <li><Link to="/explorer">Explorer</Link></li>
+                        </ul>
+                    </nav>
 
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/upload" element={<Upload />} />
-                    <Route path="/explorer" element={<Explorer />} />
-                </Routes>
-            </div>
-        </Router>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/upload" element={<Upload />} />
+                        <Route path="/explorer" element={<Explorer />} />
+                    </Routes>
+                </div>
+            </Router>
         </WagmiConfig>
     );
 };

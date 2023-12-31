@@ -7,11 +7,15 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "postinstall": "pnpm install weavedb-sdk@0.37.2"
+    "preview": "vite preview"
   },
   "dependencies": {
+    "@ethersproject/providers": "^5.7.2",
     "@fleekxyz/sdk": "^0.7.2",
+    "@moralisweb3/client-firebase-auth-utils": "^2.23.2",
+    "@moralisweb3/client-firebase-evm-auth": "^2.23.2",
+    "@walletconnect/web3-provider": "^1.8.0",
+    "@web3modal/siwe": "^3.5.3",
     "@web3modal/wagmi": "^3.4.0",
     "axios": "^1.6.2",
     "buffer": "^6.0.3",
@@ -19,12 +23,12 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.0",
+    "siwe": "^2.1.4",
     "stream-browserify": "^3.0.0",
     "util": "^0.12.5",
     "viem": "^1.19.11",
     "vite-plugin-node-polyfills": "^0.16.0",
-    "wagmi": "^1.4.8",
-    "weavedb-sdk": "^0.37.2"
+    "wagmi": "^1.4.8"
   },
   "devDependencies": {
     "@types/react": "^18.2.38",
@@ -37,10 +41,5 @@
     "eslint-plugin-react-refresh": "^0.4.4",
     "typescript": "5.0.4",
     "vite": "^5.0.2"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "weavedb-sdk@0.37.2": "patches/weavedb-sdk@0.37.2.patch"
-    }
   }
 }
