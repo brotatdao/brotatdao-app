@@ -2,54 +2,55 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home/Home';
 import Upload from './pages/Upload/Upload';
 import Explorer from './pages/Explorer/Explorer';
+import Auth from './components/Auth'; 
+import { firebaseApp } from './components/firebaseConfig';
 import { WagmiConfig } from 'wagmi';
-import { wagmiConfig } from './components/useWallet'; 
+import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react';
+import { mainnet } from 'viem/chains';
+import ConnectButton from './components/ConnectButton'
 import "./App.css";
 
-// Firebase imports
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+const projectId = import.meta.env.VITE_WALLETCONNECT_ID;
 
-// Firebase configuration (use your own configuration)
-const firebaseConfig = {
-  apiKey: "AIzaSyBDR4vkS-1fd0VeeyxlcGQXJNLBdYrK5zc",
-  authDomain: "brotatdao.firebaseapp.com",
-  projectId: "brotatdao",
-  storageBucket: "brotatdao.appspot.com",
-  messagingSenderId: "877410774360",
-  appId: "1:877410774360:web:be6b8f80aa74ae4c0bc92d",
-  measurementId: "G-JK4PS0HWGX"
+const metadata = {
+    name: 'brotatdao', 
+    description: 'brotatdao',
+    url: 'https://brotatdao.eth.limo',
+    icons: ['https://avatars.githubusercontent.com/u/37784886']
 };
 
-// Initialize Firebase then Firestore
-const firebaseApp = initializeApp(firebaseConfig);
-const db = getFirestore(firebaseApp);
+const chains = [mainnet];
+const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
 
-// Export Firebase services
-export { firebaseApp, db };
+createWeb3Modal({ wagmiConfig, projectId, chains });
 
 const App = () => {
-    return (
-        <WagmiConfig config={wagmiConfig}>
-            <Router>
-                <div>
-                    <nav>
-                        <ul>
-                            <li><Link to="/">Home</Link></li>
-                            <li><Link to="/upload">Upload</Link></li>
-                            <li><Link to="/explorer">Explorer</Link></li>
-                        </ul>
-                    </nav>
+ Auth(); 
 
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/upload" element={<Upload />} />
-                        <Route path="/explorer" element={<Explorer />} />
-                    </Routes>
-                </div>
-            </Router>
-        </WagmiConfig>
-    );
+ return (
+   <WagmiConfig config={wagmiConfig}>
+     <Router>
+         <div>
+             <nav>
+                <ul>
+                   <li><Link to="/">Home</Link></li>
+                   <li><Link to="/upload">Upload</Link></li>
+                   <li><Link to="/explorer">Explorer</Link></li>
+                </ul>
+             </nav>
+
+             <ConnectButton />
+
+             <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/upload" element={<Upload />} />
+                <Route path="/explorer" element={<Explorer />} />
+             </Routes>
+         </div>
+     </Router>
+   </WagmiConfig>
+ );
 };
 
 export default App;
+export { firebaseApp };

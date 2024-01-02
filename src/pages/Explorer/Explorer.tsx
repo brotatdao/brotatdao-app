@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getFirestore, collection, query, orderBy, getDocs } from 'firebase/firestore';
 import './Explorer.css';
-import { db } from '../../App';
+//import { db } from '../../App';
 
 
 type Profile = {
@@ -30,10 +30,10 @@ const Explorer: React.FC = () => {
     useEffect(() => {
         const fetchProfiles = async () => {
             try {
-                const q = query(collection(db, "nftProfiles"), orderBy("created_at", "desc"));
-                const querySnapshot = await getDocs(q);
-                const fetchedProfiles = querySnapshot.docs.map(doc => doc.data() as Profile);
-                setProfiles(fetchedProfiles);
+  //              const q = query(collection(db, "nftProfiles"), orderBy("created_at", "desc"));
+  //              const querySnapshot = await getDocs(q);
+  //              const fetchedProfiles = querySnapshot.docs.map(doc => doc.data() as Profile);
+  //              setProfiles(fetchedProfiles);
             } catch (error) {
                 console.error("Error fetching profiles from Firestore:", error);
             }

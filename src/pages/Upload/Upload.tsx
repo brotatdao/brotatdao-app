@@ -4,11 +4,8 @@ import { FleekSdk, ApplicationAccessTokenService } from '@fleekxyz/sdk';
 import axios from 'axios';
 import ProfileCard from '../../components/ProfileCard';
 import { listNftsByAccount } from '../../components/OpenSea';
-import useWallet from '../../components/useWallet';
-import { useDisconnect } from 'wagmi';
+import { useAccount } from 'wagmi'
 import './Upload.css';
-import { db } from '../../App';
-import { doc, setDoc } from 'firebase/firestore';
 
 const applicationService = new ApplicationAccessTokenService({
     clientId: import.meta.env.VITE_FLEEK_CLIENT_ID!,
@@ -36,29 +33,7 @@ const Upload: React.FC = () => {
     const [nfts, setNfts] = useState<Nft[]>([]);
     const [selectedNft, setSelectedNft] = useState<Nft | null>(null);
     const [twitterHandle, setTwitterHandle] = useState("");
-    const { account, initiateConnection } = useWallet();
-    const { disconnect } = useDisconnect();
-    const [isConnected, setIsConnected] = useState(false);
-
-    // Update isConnected when account changes
-    useEffect(() => {
-        setIsConnected(!!account);
-    }, [account]);
-
-    // Toggle connection function
-    const toggleConnection = () => {
-        if (isConnected) {
-            disconnect();
-        } else {
-            initiateConnection();
-        }
-    };
-
-    useEffect(() => {
-        if (account) {
-            fetchNfts(account);
-        }
-    }, [account]);
+    const { address: walletAddress } = useAccount();
 
     const fetchNfts = async (account: string) => {
         try {
@@ -73,6 +48,13 @@ const Upload: React.FC = () => {
         }
     };
 
+    useEffect(() => {
+        if (walletAddress) {
+            // Fetch NFTs for the connected account
+            fetchNfts(walletAddress);
+        }
+    }, [walletAddress]);
+
     const handleNftSelect = (nft: Nft) => {
         setSelectedNft(nft);
     };
@@ -84,7 +66,6 @@ const Upload: React.FC = () => {
     const handleProfileNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setProfileName(event.target.value);
     };
-
 
     const handleUpload = async () => {
         if (!selectedNft || !bio || !profileName) {
@@ -115,7 +96,6 @@ const Upload: React.FC = () => {
         const response = await fetch(selectedNft.image_url);
         const blob = await response.blob();
         const arrayBuffer = await new Response(blob).arrayBuffer();
-    
         const files = [
             { path: htmlFile.name, content: await htmlFile.arrayBuffer() },
             { path: selectedNft.image_url.split('/').pop()!, content: arrayBuffer },
@@ -124,31 +104,22 @@ const Upload: React.FC = () => {
         try {
             setIsLoading(true);
             const uploadResult = await fleekSdk.ipfs().addAll(files);
-    
             const contentHash = `ipfs://${uploadResult[0].cid}`;
             const ipfsProfilePicUrl = `ipfs://${uploadResult[1].cid}`;
     
-        if (account) {
+
             const profileInfo = {
                 ...selectedNft,
                 ipfsUrl: contentHash,
                 profilePicUrl: ipfsProfilePicUrl,
                 profileName,
                 bio,
-                walletAddress: account,
+                walletAddress,
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
                 twitterHandle,
             };
     
-            try {
-                await setDoc(doc(db, 'nftProfiles', selectedNft.identifier), profileInfo);
-                console.log('Profile uploaded to Firestore:', profileInfo);
-            } catch (error) {
-                console.error('Error uploading profile to Firestore:', error);
-            }
-        }
-
     
         try {
             const ensSetSuccessfully = await setEnsSubdomain(contentHash, ipfsProfilePicUrl);
@@ -173,7 +144,7 @@ const Upload: React.FC = () => {
 
     const setEnsSubdomain = async (contentHash: string, ipfsProfilePicUrl: string) => {
         const domain = "brotatdao.eth";
-        const address = account;
+        const address = walletAddress;
         const description = bio.substring(0, 255);
 
         const payload = {
@@ -208,11 +179,6 @@ const Upload: React.FC = () => {
             }              
     };
 
-    const reformatLink = (link: string) => {
-        const hash = link.split('//')[1].split('.')[0];
-        return `ipfs://${hash}`;
-    };
-
     return (
         <div className="Upload">
         <header className="App-header">
@@ -221,12 +187,6 @@ const Upload: React.FC = () => {
             ) : (
                 <>
                     <p className="title-text">Face Fables :)</p>
-                    {/* Connect and Disconnect Buttons */}
-                    <div className="button-container">
-                    <button className="styled-button" onClick={toggleConnection}>
-                        {isConnected ? 'Disconnect Wallet' : 'Connect Wallet'}
-                    </button>
-                </div>
                     <div className="flex-container">
                             <div className="input-container">
                                 <div> className="nft-grid"
