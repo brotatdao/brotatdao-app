@@ -6,7 +6,7 @@ import Auth from './components/Auth';
 import { firebaseApp } from './components/firebaseConfig';
 import { WagmiConfig } from 'wagmi';
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react';
-import { mainnet } from 'viem/chains';
+import { mainnet, sepolia } from 'viem/chains';
 import ConnectButton from './components/ConnectButton'
 import "./App.css";
 
@@ -19,7 +19,7 @@ const metadata = {
     icons: ['https://avatars.githubusercontent.com/u/37784886']
 };
 
-const chains = [mainnet];
+const chains = [mainnet, sepolia];
 const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
 
 createWeb3Modal({ wagmiConfig, projectId, chains });
