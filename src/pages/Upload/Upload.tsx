@@ -5,7 +5,10 @@ import axios from 'axios';
 import ProfileCard from '../../components/ProfileCard';
 import { listNftsByAccount } from '../../components/OpenSea';
 import { useAccount } from 'wagmi'
+import { db, auth } from '../../components/firebaseConfig';
+import { collection, doc, setDoc } from "firebase/firestore"
 import './Upload.css';
+
 
 const applicationService = new ApplicationAccessTokenService({
     clientId: import.meta.env.VITE_FLEEK_CLIENT_ID!,
@@ -119,6 +122,22 @@ const Upload: React.FC = () => {
                 updated_at: new Date().toISOString(),
                 twitterHandle,
             };
+
+            //Firestore DB upload
+            const firebaseUserId = auth.currentUser ? auth.currentUser.uid : null;
+
+            if (!firebaseUserId) {
+            console.error('No user is currently authenticated.');
+            return;
+            }
+            // Generate a new document ID for the Profiles collection
+            const newProfileDocRef = doc(collection(db, "Profiles"));
+
+            // Add profileInfo to Profiles collection
+            await setDoc(newProfileDocRef, profileInfo);
+
+            // Add Firebase User ID and walletAddress to Users collection
+            await setDoc(doc(db, "Users", firebaseUserId), { walletAddress });
     
     
         try {
