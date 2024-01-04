@@ -1,9 +1,3 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
 import hre from "hardhat";
 
 async function sleep(ms) {
@@ -15,26 +9,43 @@ async function sleep(ms) {
 }
 
 async function main() {
-  const HelloWorld = await hre.ethers.getContractFactory("HelloWorld")
-  const contract = await HelloWorld.deploy();
+  // Parameters
+  const registrationFee = hre.ethers.utils.parseEther("0.01"); // 0.01 ETH in wei
+  const erc20TokenAddress = "0x7DBC94BFDeE135BC356926766FD81974118208f5"; // Revise to Treasury for production
+  const nameWrapperAddress = "0x0635513f179D50A207757E05759CbD106d7dFcE8"; // Revise to mainnet for production
+  // Mainnet wrapper address: 0xd4416b13d2b3a9abae7acd5d6c2bbdbe25686401
 
-  await contract.deployed();
+  // Deploy FixedPricer
+  const FixedPricer = await hre.ethers.getContractFactory("FixedPricer");
+  const fixedPricer = await FixedPricer.deploy(registrationFee, erc20TokenAddress);
 
-  console.log('Contract deployed to ${contract.address}');
+  await fixedPricer.deployed();
+  console.log(`FixedPricer deployed to: ${fixedPricer.address}`);
+
+  // Deploy ForeverSubdomainRegistrar
+  const ForeverSubdomainRegistrar = await hre.ethers.getContractFactory("ForeverSubdomainRegistrar");
+  const foreverSubdomainRegistrar = await ForeverSubdomainRegistrar.deploy(nameWrapperAddress);
+  
+  await foreverSubdomainRegistrar.deployed();
+  console.log(`ForeverSubdomainRegistrar deployed to: ${foreverSubdomainRegistrar.address}`);
 
   // Delay for etherscan (sleep function above)
-  await sleep(45 * 1000)
+  await sleep(45 * 1000);
 
-  // Verify with etherscan
+  // Verify ForeverSubdomainRegistrar with etherscan
   await hre.run("verify:verify", {
-    address: contract.address,
-    constructorArguments:[],
+    address: foreverSubdomainRegistrar.address,
+    constructorArguments: [] // Add constructor arguments if any
+  });
+
+  // Verify FixedPricer with etherscan
+  await hre.run("verify:verify", {
+    address: fixedPricer.address,
+    constructorArguments: [] // Add constructor arguments if any
   });
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main().catch((error) => {
-  console.error(error)
+  console.error(error);
   process.exitCode = 1;
-})
+});
