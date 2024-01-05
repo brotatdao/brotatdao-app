@@ -1,5 +1,6 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.23;
+
 import {ISubdomainPricer} from "./ISubdomainPricer.sol";
 
 contract FixedPricer is ISubdomainPricer {
@@ -15,8 +16,8 @@ contract FixedPricer is ISubdomainPricer {
         bytes32,
         string calldata,
         uint256
-    ) public view virtual returns (address erc20Token, uint256 price) {
-        price = registrationFee;
+    ) public view virtual returns (address erc20Token, uint256 priceAmount) {
+        priceAmount = registrationFee;
         erc20Token = token;
     }
 }

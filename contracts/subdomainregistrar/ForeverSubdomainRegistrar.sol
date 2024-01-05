@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.23;
 
 import {INameWrapper, IS_DOT_ETH, PARENT_CANNOT_CONTROL, CAN_EXTEND_EXPIRY} from "../wrapper/INameWrapper.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
