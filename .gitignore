@@ -36,6 +36,7 @@ dist-ssr
 # Hardhat files
 /cache
 /artifacts
+chain-11155111
 
 # TypeChain files
 /typechain
