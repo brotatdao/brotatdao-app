@@ -67,5 +67,3 @@ contract ForeverSubdomainRegistrar is
         return super.available(node);
     }
 }
-
-//what it do?

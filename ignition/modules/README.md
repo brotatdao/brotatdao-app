@@ -21,5 +21,10 @@ for FixedPricer run:
 for ForeverSubdomainRegistrar run: 
      npx hardhat verify --network sepolia <deployed contract address> <namewrapper address>
 
-     
+
+We then need to run the scripts located in /scripts/ to Setup the domain first and then set approval for all  to allow the user to claim their subdomains.
+npx hardhat run scripts/SetupDomain.cjs --network sepolia
+npx hardhat run scripts/SetApproval.cjs --network sepolia
+
+Make sure the correct namewrapper address and deployed addresses are correct as well as the correct ENS name.
 

@@ -21,5 +21,3 @@ contract FixedPricer is ISubdomainPricer {
         erc20Token = token;
     }
 }
-
-//what it do?

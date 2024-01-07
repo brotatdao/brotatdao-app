@@ -6,9 +6,6 @@
     "skipLibCheck": true,
     "typeRoots" : ["./types", "./node_modules/@types"],
     "baseUrl": ".",
-    "paths": {
-      "weavedb-sdk": ["types/weavedb-sdk"]
-    },
     
     /* Bundler mode */
     "moduleResolution": "bundler",
