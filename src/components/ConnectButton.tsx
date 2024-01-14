@@ -11,7 +11,7 @@ export default function ConnectButton() {
   } else if (isDisconnected) {
     setButtonLabel('Connect Wallet');
   } else if (address) {
-    setButtonLabel('Disconnect Wallet');
+    setButtonLabel(`Disconnect (${address.substring(0, 6)}...${address.substring(address.length - 4)})`);
   }
  }, [isConnecting, isDisconnected, address]);
 
