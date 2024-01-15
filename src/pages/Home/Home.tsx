@@ -1,16 +1,21 @@
-import { Link } from 'react-router-dom';
+import HeroSection from './HeroSection';
+import FeatureSection from './FeatureSection';
+import LogoImage from '../../assets/brologo.svg';
 
 const Home = () => {
   return (
-    <div className="container mx-auto px-6 md:px-12 py-12">
-        <div className="flex flex-col md:flex-row items-center justify-between">
-          <div className="md:w-1/2">
-            <h1 className="text-4xl md:text-5xl xl:text-6xl font-bold leading-tight text-zinc-800">Welcome to Our Platform</h1>
-            <p className="mt-2 text-zinc-600">Explore, upload, and connect with the world of digital assets.</p>
-            <Link to="/upload" className="mt-4 bg-zinc-800 text-white px-4 py-2 rounded hover:bg-zinc-700 transition duration-300">Get Started</Link>
-          </div>
-        </div>
+    <div className="relative min-h-screen">
+      {/* Logo Image */}
+      <div className="absolute top-0 right-0 md:w-2/3 lg:w-3/4 xl:w-4/5 2xl:w-full h-full overflow-hidden z-10">
+        <img src={LogoImage} alt="Logo" className="w-full h-full object-cover opacity-10" style={{ transform: 'translateX(15%) scale(1)' }} />
       </div>
+
+      {/* Content Sections */}
+      <div className="relative z-20">
+        <HeroSection />
+        <FeatureSection />
+      </div>
+    </div>
   );
 };
 
