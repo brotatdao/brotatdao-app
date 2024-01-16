@@ -22,7 +22,7 @@ const features = [
   },
   {
     name: 'Whats next?',
-    description: 'It do what it dao.',
+    description: 'Well..  It do what it dao.',
     icon: RxChevronRight,
   },
 ]
@@ -36,7 +36,7 @@ export default function FeatureSection() {
             Welcome to brotatdao.
           </p>
           <p className="mt-6 text-lg leading-8 text-gray-600">
-            your NFT has a biography,  a story to tell, a message for the bros.
+            your NFT has a biography,  a story to tell, a message for the world.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">

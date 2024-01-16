@@ -7,6 +7,7 @@ import { listNftsByAccount } from '../../components/OpenSea';
 import { useAccount } from 'wagmi'
 import { db, auth } from '../../components/firebaseConfig';
 import { collection, doc, setDoc } from "firebase/firestore"
+import { Profile } from 'src/components/profileTypes';
 import { FaXTwitter } from 'react-icons/fa6';
 
 
@@ -37,6 +38,9 @@ const Upload: React.FC = () => {
     const [selectedNft, setSelectedNft] = useState<Nft | null>(null);
     const [twitterHandle, setTwitterHandle] = useState("");
     const { address: walletAddress } = useAccount();
+    const [uploadSuccess, setUploadSuccess] = useState(false);
+    const [uploadedProfile, setUploadedProfile] = useState<Profile | null>(null);
+    const [ensSubdomain, setEnsSubdomainUrl] = useState("");
 
     const fetchNfts = async (account: string) => {
         try {
@@ -117,7 +121,7 @@ const Upload: React.FC = () => {
                 profilePicUrl: ipfsProfilePicUrl,
                 profileName,
                 bio,
-                walletAddress,
+                walletAddress: walletAddress || '',
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
                 twitterHandle,
@@ -146,6 +150,10 @@ const Upload: React.FC = () => {
                 setIsLoading(false);
                 return;
             }
+            // Set state for successful upload
+            setUploadSuccess(true);
+            setUploadedProfile(profileInfo);
+            setEnsSubdomainUrl(`${profileName}.brotatdao.eth.limo`);
         } catch (err) {
             console.error(err);
             return;
@@ -204,6 +212,21 @@ const Upload: React.FC = () => {
                 <div className="container mx-auto px-6">
                     {isLoading ? (
                         <div className="text-center text-lg font-semibold">Uploading...</div>
+                    ) : uploadSuccess && uploadedProfile ? (
+                        // Display the uploaded profile card and links
+                        <div className="text-center">
+                            <ProfileCard
+                                profileName={uploadedProfile.profileName}
+                                bio={uploadedProfile.bio}
+                                profilePicUrl={uploadedProfile.profilePicUrl}
+                            />
+                            <div className="mt-4">
+                                <a href={uploadedProfile.ipfsUrl} target="_blank" rel="noopener noreferrer">IPFS URL</a>
+                                <br />
+                                <a href={`https://${setEnsSubdomainUrl}`} target="_blank" rel="noopener noreferrer">{ensSubdomain}</a>
+                            </div>
+                            <button className="mt-4 w-full bg-zinc-600 text-white px-6 py-3 rounded-full hover:bg-zinc-500 transition duration-300" onClick={() => setUploadSuccess(false)}>Upload Another</button>
+                        </div>
                     ) : (
                         <>
                             <h1 className="text-center text-2xl font-bold text-zinc-700 mb-5">Connect your wallet and sign in to choose your NFT.  This will not trigger a blockchain event, cost gas or any fees. </h1>
