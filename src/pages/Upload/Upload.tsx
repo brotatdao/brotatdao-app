@@ -205,7 +205,7 @@ const Upload: React.FC = () => {
                 <div className="uploading-text">Uploading...</div>
             ) : (
                 <>
-                    <p className="title-text">Face Fables :)</p>
+                    <p className="title-text">brotatdao</p>
                     <div className="flex-container">
                             <div className="input-container">
                                 <div> className="nft-grid"
