@@ -206,7 +206,7 @@ const Upload: React.FC = () => {
                         <div className="text-center text-lg font-semibold">Uploading...</div>
                     ) : (
                         <>
-                            <h1 className="text-2xl font-bold text-zinc-700 mb-5">Connect your wallet and sign in to choose your NFT.  This will not trigger a blockchain event, cost gas or any fees. </h1>
+                            <h1 className="text-center text-2xl font-bold text-zinc-700 mb-5">Connect your wallet and sign in to choose your NFT.  This will not trigger a blockchain event, cost gas or any fees. </h1>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm" style={{ maxHeight: '75vh', overflowY: 'auto' }}>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
