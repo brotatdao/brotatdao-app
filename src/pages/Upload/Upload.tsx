@@ -72,7 +72,7 @@ const Upload: React.FC = () => {
 
     const handleUpload = async () => {
         if (!selectedNft || !bio || !profileName) {
-            alert("Please select an NFT, enter a name and biography");
+            alert("Please select an NFT, enter a name and bio");
             return;
         }
     
@@ -86,7 +86,7 @@ const Upload: React.FC = () => {
         const htmlContent = `
             <html>
             <head>
-                <title>Profile Page</title>
+                <title>${profileName} - Profile Page</title>
             </head>
             <body>
                 ${profileCardHtml}
@@ -228,15 +228,35 @@ const Upload: React.FC = () => {
                                     )}
                                     <div className="mb-4">
                                         <label htmlFor="profileName" className="block text-sm font-medium text-gray-800">Name?</label>
-                                        <input type="text" id="profileName" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-gray-500 focus:border-gray-500 p-2" onChange={handleProfileNameChange} />
+                                        <input 
+                                            type="text" 
+                                            id="profileName" 
+                                            maxLength={50}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-gray-500 focus:border-gray-500 p-2" 
+                                            onChange={handleProfileNameChange} 
+                                        />
                                     </div>
                                     <div className="mb-4">
                                         <label htmlFor="bio" className="block text-sm font-medium text-gray-800">What it do?:</label>
-                                        <textarea id="bio" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-gray-500 focus:border-gray-500 p-2" rows={4} onChange={handleBioChange}></textarea>
+                                        <textarea 
+                                            id="bio" 
+                                            maxLength={700}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-gray-500 focus:border-gray-500 p-2" 
+                                            rows={4} 
+                                            onChange={handleBioChange}
+                                        ></textarea>
                                     </div>
                                     <div className="mb-6">
-                                        <label htmlFor="twitterHandle" className="block text-sm font-medium text-gray-800"><FaXTwitter className="h-5 w-5" aria-hidden="true" /> handle only - no @ or URL</label>
-                                        <input type="text" id="twitterHandle" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-gray-500 focus:border-gray-500 p-2" onChange={(e) => setTwitterHandle(e.target.value)} />
+                                        <label htmlFor="twitterHandle" className="block text-sm font-medium text-gray-800">
+                                            <FaXTwitter className="h-5 w-5" aria-hidden="true" /> username only - no @ or URL
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            id="twitterHandle" 
+                                            maxLength={15}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-gray-500 focus:border-gray-500 p-2" 
+                                            onChange={(e) => setTwitterHandle(e.target.value)} 
+                                        />
                                     </div>
                                     <button className="w-full bg-zinc-600 text-white px-6 py-3 rounded-full hover:bg-zinc-500 transition duration-300" onClick={handleUpload}>Upload</button>
                                 </div>
