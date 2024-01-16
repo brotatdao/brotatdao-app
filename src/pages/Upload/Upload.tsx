@@ -7,7 +7,7 @@ import { listNftsByAccount } from '../../components/OpenSea';
 import { useAccount } from 'wagmi'
 import { db, auth } from '../../components/firebaseConfig';
 import { collection, doc, setDoc } from "firebase/firestore"
-import './Upload.css';
+import { FaXTwitter } from 'react-icons/fa6';
 
 
 const applicationService = new ApplicationAccessTokenService({
@@ -199,50 +199,57 @@ const Upload: React.FC = () => {
     };
 
     return (
-        <div className="Upload">
-        <header className="App-header">
-            {isLoading ? (
-                <div className="uploading-text">Uploading...</div>
-            ) : (
-                <>
-                    <p className="title-text">brotatdao</p>
-                    <div className="flex-container">
-                            <div className="input-container">
-                                <div> className="nft-grid"
-                                    {nfts.map((nft, index) => (
-                                        <div key={index} className="nft-item" onClick={() => handleNftSelect(nft)}>
-                                            <img src={nft.image_url} alt={nft.name} />
-                                            <div>{nft.name}</div>
+        <div className="min-h-screen bg-zinc-50">
+            <header className="py-10">
+                <div className="container mx-auto px-6">
+                    {isLoading ? (
+                        <div className="text-center text-lg font-semibold">Uploading...</div>
+                    ) : (
+                        <>
+                            <h1 className="text-2xl font-bold text-zinc-700 mb-5">Connect your wallet and sign in to choose your NFT.  This will not trigger a blockchain event, cost gas or any fees. </h1>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm" style={{ maxHeight: '75vh', overflowY: 'auto' }}>
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                        {nfts.map((nft, index) => (
+                                            <div key={index}
+                                                 className={`cursor-pointer p-2 border-2 ${selectedNft?.identifier === nft.identifier ? 'border-gray-700' : 'border-transparent'} rounded-md hover:shadow-lg transition-all`}
+                                                 onClick={() => handleNftSelect(nft)}>
+                                                <img src={nft.image_url} alt={nft.name} className="w-full h-40 object-cover rounded-md hover:opacity-75" />
+                                                <div className="text-center text-sm font-semibold mt-2">{nft.name}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm">
+                                    {selectedNft && (
+                                        <div className="mb-4 flex justify-center">
+                                            <img src={selectedNft.image_url} alt={selectedNft.name} className="w-1/4 h-auto object-cover rounded-md" />
                                         </div>
-                                    ))}
-                                </div>
-                                <div className="name-container">
-                                    <label className="styled-label" htmlFor="profileName">Name your NFT:</label>
-                                    <input id="name" onChange={handleProfileNameChange} className="styled-input" />
-                                </div>
-                                <div className="bio-container">
-                                    <label className="styled-label" htmlFor="bio">Biography:</label>
-                                    <textarea id="bio" onChange={handleBioChange} className="styled-textarea"></textarea>
-                                </div>
-                                <div className="twitter-handle-container">
-                                    <label className="styled-label" htmlFor="twitterHandle">Twitter Handle:</label>
-                                    <input id="twitterHandle" onChange={(e) => setTwitterHandle(e.target.value)} className="styled-input" />
-                                </div>
-                                <div className="button-container">
-                                    <button
-                                        className="styled-button"
-                                        onClick={handleUpload}
-                                    >
-                                        Upload
-                                    </button>
+                                    )}
+                                    <div className="mb-4">
+                                        <label htmlFor="profileName" className="block text-sm font-medium text-gray-800">Name?</label>
+                                        <input type="text" id="profileName" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-gray-500 focus:border-gray-500 p-2" onChange={handleProfileNameChange} />
+                                    </div>
+                                    <div className="mb-4">
+                                        <label htmlFor="bio" className="block text-sm font-medium text-gray-800">What it do?:</label>
+                                        <textarea id="bio" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-gray-500 focus:border-gray-500 p-2" rows={4} onChange={handleBioChange}></textarea>
+                                    </div>
+                                    <div className="mb-6">
+                                        <label htmlFor="twitterHandle" className="block text-sm font-medium text-gray-800"><FaXTwitter className="h-5 w-5" aria-hidden="true" /> handle only - no @ or URL</label>
+                                        <input type="text" id="twitterHandle" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-gray-500 focus:border-gray-500 p-2" onChange={(e) => setTwitterHandle(e.target.value)} />
+                                    </div>
+                                    <button className="w-full bg-zinc-600 text-white px-6 py-3 rounded-full hover:bg-zinc-500 transition duration-300" onClick={handleUpload}>Upload</button>
                                 </div>
                             </div>
-                        </div>
-                    </>
-                )}
+                        </>
+                    )}
+                </div>
             </header>
         </div>
     );
+    
+    
+    
 };
 
 export default Upload;
