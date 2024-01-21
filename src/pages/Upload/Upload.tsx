@@ -235,7 +235,7 @@ const Upload: React.FC = () => {
                                 Raw IPFS Url
                             </a>
                             <br/>
-                            <a href={`https://${setEnsSubdomainUrl}`} target="_blank" rel="noopener noreferrer" className="text-xl text-green-600 hover:text-green-800 transition duration-300">
+                            <a href={`https://${ensSubdomain}`} target="_blank" rel="noopener noreferrer" className="text-xl text-green-600 hover:text-green-800 transition duration-300">
                                 {profileName}.brotatdao.eth subdomain
                             </a>
                         </div>
