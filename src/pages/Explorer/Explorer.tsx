@@ -42,7 +42,9 @@ const Explorer: React.FC = () => {
         const lowercasedSearchTerm = searchTerm.toLowerCase();
         const filtered = profiles.filter(profile => 
             profile.profileName.toLowerCase().includes(lowercasedSearchTerm) ||
-            profile.bio.toLowerCase().includes(lowercasedSearchTerm)
+            profile.bio.toLowerCase().includes(lowercasedSearchTerm) ||
+            profile.twitterHandle?.toLowerCase().includes(lowercasedSearchTerm) ||
+            profile.collection?.toLowerCase().includes(lowercasedSearchTerm)
         );
         setFilteredProfiles(filtered);
     }, [searchTerm, profiles]);
@@ -72,7 +74,7 @@ const Explorer: React.FC = () => {
             <button onClick={toggleView} className="mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                 {viewOwnProfiles ? "View All Profiles" : "View My Profiles"}
             </button>
-                {filteredProfiles.map((profile, index) => (
+            {filteredProfiles.map((profile, index) => (
                 <div key={index} className="bg-gradient-to-br from-white to-gray-200 rounded-lg shadow-md overflow-hidden flex flex-row mb-5 w-full max-w-4xl">
                     <div className="flex-none w-1/3">
                         <img src={profile.image_url} alt="Profile Pic" className="w-full h-full object-cover rounded-l-lg" />
