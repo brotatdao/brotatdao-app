@@ -9,6 +9,7 @@ import { db, auth } from '../../components/firebaseConfig';
 import { collection, doc, setDoc } from "firebase/firestore"
 import { Profile } from 'src/components/profileTypes';
 import { FaXTwitter } from 'react-icons/fa6';
+import { AiOutlineLoading } from "react-icons/ai";
 
 
 const applicationService = new ApplicationAccessTokenService({
@@ -212,9 +213,7 @@ const Upload: React.FC = () => {
                 <div className="container mx-auto px-6">
                 {isLoading ? (
                     <div className="text-center">
-                        <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full" role="status">
-                            <span className="visually-hidden">...</span>
-                        </div>
+                        <AiOutlineLoading className="animate-spin h-8 w-8 text-gray-800" />
                         <div className="mt-3 text-lg font-semibold text-gray-700">Loading...</div>
                     </div>
                 ) : uploadSuccess && uploadedProfile ? (

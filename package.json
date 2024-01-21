@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@fleekxyz/sdk": "^0.7.2",
+    "@headlessui/react": "^1.7.18",
     "@moralisweb3/client-firebase-auth-utils": "^2.23.2",
     "@moralisweb3/client-firebase-evm-auth": "^2.23.2",
     "@web3modal/wagmi": "^3.4.0",
