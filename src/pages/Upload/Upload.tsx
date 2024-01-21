@@ -226,8 +226,8 @@ const Upload: React.FC = () => {
                                 <img src={uploadedProfile.image_url || uploadedProfile.profilePicUrl} alt="Profile Pic" className="w-full h-full object-cover rounded-l-lg" />
                             </div>
                             <div className="flex-grow p-5">
-                                <div className="text-left text-xl font-semibold text-gray-800">{uploadedProfile.profileName}</div>
-                                <div className=" text-gray-600 mt-2">{uploadedProfile.bio}</div>
+                                <div className="text-left text-3xl font-semibold text-gray-800">{uploadedProfile.profileName}</div>
+                                <div className="text-left text-gray-600 mt-2">{uploadedProfile.bio}</div>
                             </div>
                         </div>
                         <div className="mt-4">
