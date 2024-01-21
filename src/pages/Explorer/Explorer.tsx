@@ -4,6 +4,8 @@ import { db, } from '../../components/firebaseConfig';
 import { Profile } from 'src/components/profileTypes';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../components/firebaseConfig';
+import { AiOutlineLoading } from "react-icons/ai";
+import { Switch } from '@headlessui/react';
 
 
 const Explorer: React.FC = () => {
@@ -49,33 +51,55 @@ const Explorer: React.FC = () => {
         setFilteredProfiles(filtered);
     }, [searchTerm, profiles]);
 
-    const toggleView = () => {
-        setViewOwnProfiles(!viewOwnProfiles);
-    };
-
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
     };
 
+    const toggleView = () => setViewOwnProfiles(prev => !prev);
+
     if (!profiles.length) {
-        return <div className="text-zinc-800 font-semibold">Loading...</div>;
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <AiOutlineLoading className="animate-spin h-8 w-8 text-zinc-800" />
+                <span className="text-zinc-800 font-semibold ml-2">Loading...</span>
+            </div>
+        );
     }
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-50 p-4">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4">
             <h1 className="text-3xl font-bold text-zinc-800 mb-8">Profile Explorer</h1>
+
+            <Switch.Group as="div" className="flex items-center space-x-4 mb-4">
+                <Switch.Label passive>
+                    View All Profiles
+                </Switch.Label>
+                <Switch
+                    checked={viewOwnProfiles}
+                    onChange={toggleView}
+                    className={`${viewOwnProfiles ? 'bg-zinc-600' : 'bg-zinc-300'}
+                                relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none`}
+                >
+                    <span
+                        className={`${viewOwnProfiles ? 'translate-x-6' : 'translate-x-1'}
+                                    inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}
+                    />
+                </Switch>
+                <Switch.Label passive>
+                    View My Profiles
+                </Switch.Label>
+            </Switch.Group>
+
             <input
                 type="text"
                 placeholder="Search profiles..."
                 value={searchTerm}
                 onChange={handleSearchChange}
-                className="mb-4 p-2 border rounded"
+                className="mb-10 p-2 border rounded border-zinc-400"
             />
-            <button onClick={toggleView} className="mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                {viewOwnProfiles ? "View All Profiles" : "View My Profiles"}
-            </button>
+
             {filteredProfiles.map((profile, index) => (
-                <div key={index} className="bg-gradient-to-br from-white to-gray-200 rounded-lg shadow-md overflow-hidden flex flex-row mb-5 w-full max-w-4xl">
+                <div key={index} className="bg-gradient-to-br from-white to-zinc-200 rounded-lg shadow-md overflow-hidden flex flex-row mb-5 w-full max-w-4xl">
                     <div className="flex-none w-1/3">
                         <img src={profile.image_url} alt="Profile Pic" className="w-full h-full object-cover rounded-l-lg" />
                     </div>
