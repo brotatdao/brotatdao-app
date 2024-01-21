@@ -29,7 +29,7 @@ const features = [
 
 export default function FeatureSection() {
   return (
-    <div className="bg-white bg-opacity-0 py-24 sm:py-32">
+    <div className="bg-white bg-opacity-0 sm:pt-12 py-24">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
           <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">

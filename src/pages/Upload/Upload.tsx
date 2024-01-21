@@ -209,7 +209,7 @@ const Upload: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-zinc-50 flex justify-center items-center">
-            <header className="py-10">
+            <header className="pt-2 pb-10">
                 <div className="container mx-auto px-6">
                 {isLoading ? (
                     <div className="text-center">
@@ -238,13 +238,13 @@ const Upload: React.FC = () => {
                                 {profileName}.brotatdao.eth subdomain
                             </a>
                         </div>
-                        <button className="mt-6 w-full bg-zinc-600 text-white px-6 py-3 rounded-full hover:bg-zinc-500 transition duration-300" onClick={() => setUploadSuccess(false)}>Upload Another</button>
+                        <button className="mt-6 w-full bg-zinc-600 text-white px-6 py-3 rounded-full hover:bg-zinc-500 transition duration-300" onClick={() => setUploadSuccess(false)}>Create another profile</button>
                     </div>
                     ) : (
                         <>
-                            <h1 className="text-center text-2xl font-bold text-zinc-700 mb-5">Connect your wallet and sign in to choose your NFT.  This will not trigger a blockchain event, cost gas or any fees. </h1>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm" style={{ maxHeight: '75vh', overflowY: 'auto' }}>
+                                    <p className="text-gray-700 text-center font-bold mb-4">Connect your wallet, sign in, and select a NFT</p>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                         {nfts.map((nft, index) => (
                                             <div key={index}
@@ -257,6 +257,7 @@ const Upload: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="bg-white p-8 rounded-lg border border-gray-200 shadow-sm">
+                                    <p className="text-gray-700 text-center font-bold mb-4">Give us the scoop</p>
                                     {selectedNft && (
                                         <div className="mb-4 flex justify-center">
                                             <img src={selectedNft.image_url} alt={selectedNft.name} className="w-1/4 h-auto object-cover rounded-md" />
@@ -273,7 +274,7 @@ const Upload: React.FC = () => {
                                         />
                                     </div>
                                     <div className="mb-4">
-                                        <label htmlFor="bio" className="block text-sm font-medium text-gray-800">What it do?:</label>
+                                        <label htmlFor="bio" className="block text-sm font-medium text-gray-800">What it do?</label>
                                         <textarea 
                                             id="bio" 
                                             maxLength={700}
@@ -294,7 +295,8 @@ const Upload: React.FC = () => {
                                             onChange={(e) => setTwitterHandle(e.target.value)} 
                                         />
                                     </div>
-                                    <button className="w-full bg-zinc-600 text-white px-6 py-3 rounded-full hover:bg-zinc-500 transition duration-300" onClick={handleUpload}>Upload</button>
+                                    <button className="w-full bg-zinc-600 text-white px-6 py-3 rounded-full hover:bg-zinc-500 transition duration-300" onClick={handleUpload}>Create Profile - Free</button>
+                                    <p className="text-gray-700 text-center mb-4">This will NOT trigger a blockchain event, cost gas or fees.</p>
                                 </div>
                             </div>
                         </>
