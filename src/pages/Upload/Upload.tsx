@@ -113,6 +113,14 @@ const Upload: React.FC = () => {
             const uploadResult = await fleekSdk.ipfs().addAll(files);
             const contentHash = `ipfs://${uploadResult[0].cid}`;
             const ipfsProfilePicUrl = `ipfs://${uploadResult[1].cid}`;
+            const firebaseUserId = auth.currentUser ? auth.currentUser.uid : null;
+
+            if (!firebaseUserId) {
+                console.error('No user is currently authenticated.');
+                setIsLoading(false); // Ensure loading state is reset
+                return;
+            }
+    
     
 
             const profileInfo = {
@@ -125,24 +133,16 @@ const Upload: React.FC = () => {
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
                 twitterHandle,
+                firebaseUserId
             };
 
-            //Firestore DB upload
-            const firebaseUserId = auth.currentUser ? auth.currentUser.uid : null;
-
-            if (!firebaseUserId) {
-            console.error('No user is currently authenticated.');
-            return;
-            }
             // Generate a new document ID for the Profiles collection
             const newProfileDocRef = doc(collection(db, "Profiles"));
 
             // Add profileInfo to Profiles collection
             await setDoc(newProfileDocRef, profileInfo);
 
-            // Add Firebase User ID and walletAddress to Users collection
-            await setDoc(doc(db, "Users", firebaseUserId), { walletAddress });
-    
+            
     
         try {
             const ensSetSuccessfully = await setEnsSubdomain(contentHash, ipfsProfilePicUrl);
