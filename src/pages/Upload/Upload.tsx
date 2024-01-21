@@ -40,7 +40,7 @@ const Upload: React.FC = () => {
     const { address: walletAddress } = useAccount();
     const [uploadSuccess, setUploadSuccess] = useState(false);
     const [uploadedProfile, setUploadedProfile] = useState<Profile | null>(null);
-    const [ensSubdomain, setEnsSubdomainUrl] = useState("");
+    const [ensSubdomainUrl, setEnsSubdomainUrl] = useState("");
 
     const fetchNfts = async (account: string) => {
         try {
@@ -235,7 +235,7 @@ const Upload: React.FC = () => {
                                 Raw IPFS Url
                             </a>
                             <br/>
-                            <a href={`https://${ensSubdomain}`} target="_blank" rel="noopener noreferrer" className="text-xl text-green-600 hover:text-green-800 transition duration-300">
+                            <a href={`https://${ensSubdomainUrl}`} target="_blank" rel="noopener noreferrer" className="text-xl text-green-600 hover:text-green-800 transition duration-300">
                                 {profileName}.brotatdao.eth subdomain
                             </a>
                         </div>
