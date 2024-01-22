@@ -294,7 +294,7 @@ const Upload: React.FC = () => {
                                             onChange={handleProfileNameChange} 
                                         />
                                         {isProfileNameTaken && (
-                                            <p className="text-red-600 text-xs italic">This profile name is already taken.</p>
+                                            <p className="text-red-600 text-xs italic">That name's taken bro</p>
                                         )}
                                     </div>
                                     <div className="mb-4">
