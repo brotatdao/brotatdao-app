@@ -27,7 +27,7 @@ createWeb3Modal({
   projectId,
   chains,
   themeVariables: {
-    '--w3m-accent': '#52525B', // Greyscale color for buttons, icons, labels, etc.
+    '--w3m-accent': '#52525B', // Zinc color for buttons, icons, labels, etc.
     '--w3m-color-mix': '#1A202C', // Dark zinc color for blending
     '--w3m-color-mix-strength': 40, // Strength of color mix blending
   }
