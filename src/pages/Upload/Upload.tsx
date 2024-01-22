@@ -6,7 +6,7 @@ import ProfileCard from '../../components/ProfileCard';
 import { listNftsByAccount } from '../../components/OpenSea';
 import { useAccount } from 'wagmi'
 import { db, auth } from '../../components/firebaseConfig';
-import { collection, doc, setDoc } from "firebase/firestore"
+import { collection, doc, setDoc, query, where, getDocs } from "firebase/firestore"
 import { Profile } from 'src/components/profileTypes';
 import { FaXTwitter } from 'react-icons/fa6';
 import { AiOutlineLoading } from "react-icons/ai";
@@ -42,6 +42,8 @@ const Upload: React.FC = () => {
     const [uploadSuccess, setUploadSuccess] = useState(false);
     const [uploadedProfile, setUploadedProfile] = useState<Profile | null>(null);
     const [ensSubdomainUrl, setEnsSubdomainUrl] = useState("");
+    const [isProfileNameTaken, setIsProfileNameTaken] = useState(false);
+
 
     const fetchNfts = async (account: string) => {
         try {
@@ -71,9 +73,27 @@ const Upload: React.FC = () => {
         setBio(event.target.value);
     };
 
-    const handleProfileNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setProfileName(event.target.value);
+    const handleProfileNameChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newName = event.target.value;
+        setProfileName(newName);
+    
+        if (newName.length === 0) {
+            setIsProfileNameTaken(false);
+            return;
+        }
+    
+        const newNameLower = newName.toLowerCase(); // Convert to lowercase
+    
+        try {
+            const q = query(collection(db, "Profiles"), where("profileNameLower", "==", newNameLower));
+            const querySnapshot = await getDocs(q);
+            setIsProfileNameTaken(!querySnapshot.empty);
+        } catch (error) {
+            console.error("Error checking profile name:", error);
+        }
     };
+    
+    
 
     const handleUpload = async () => {
         if (!selectedNft || !bio || !profileName) {
@@ -129,6 +149,7 @@ const Upload: React.FC = () => {
                 ipfsUrl: contentHash,
                 profilePicUrl: ipfsProfilePicUrl,
                 profileName,
+                profileNameLower: profileName.toLowerCase(),
                 bio,
                 walletAddress: walletAddress || '',
                 created_at: new Date().toISOString(),
@@ -272,6 +293,9 @@ const Upload: React.FC = () => {
                                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-gray-500 focus:border-gray-500 p-2" 
                                             onChange={handleProfileNameChange} 
                                         />
+                                        {isProfileNameTaken && (
+                                            <p className="text-red-600 text-xs italic">This profile name is already taken.</p>
+                                        )}
                                     </div>
                                     <div className="mb-4">
                                         <label htmlFor="bio" className="block text-sm font-medium text-gray-800">What it do?</label>
@@ -295,7 +319,15 @@ const Upload: React.FC = () => {
                                             onChange={(e) => setTwitterHandle(e.target.value)} 
                                         />
                                     </div>
-                                    <button className="w-full bg-zinc-600 text-white px-6 py-3 rounded-full hover:bg-zinc-500 transition duration-300" onClick={handleUpload}>Create Profile - Free</button>
+                                    <button 
+                                        className={`w-full px-6 py-3 rounded-full transition duration-300 ${
+                                            isProfileNameTaken ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-zinc-600 text-white hover:bg-zinc-500'
+                                        }`}
+                                        onClick={handleUpload}
+                                        disabled={isProfileNameTaken}
+                                    >
+                                        Create Profile - Free
+                                    </button>
                                     <p className="text-gray-700 text-center mb-4">This will NOT trigger a blockchain event, cost gas or fees.</p>
                                 </div>
                             </div>
