@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route, } from 'react-router-dom';
 import Home from './pages/Home/Home';
 import Upload from './pages/Upload/Upload';
 import Explorer from './pages/Explorer/Explorer';
-import Auth from './components/Auth'; 
 import { firebaseApp } from './components/firebaseConfig';
 import { WagmiConfig } from 'wagmi';
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react';
@@ -29,11 +28,12 @@ createWeb3Modal({
   chains,
   themeVariables: {
     '--w3m-accent': '#52525B', // Greyscale color for buttons, icons, labels, etc.
+    '--w3m-color-mix': '#1A202C', // Dark zinc color for blending
+    '--w3m-color-mix-strength': 40, // Strength of color mix blending
   }
  });
 
 const App = () => {
- Auth();
 
  return (
   <WagmiConfig config={wagmiConfig}>

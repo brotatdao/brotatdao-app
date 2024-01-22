@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
 import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
 import { auth, functions, firebaseApp } from './firebaseConfig';
@@ -16,12 +16,6 @@ const Auth = () => {
      setIsAuthenticated(false);
    }
  };
-
- useEffect(() => {
-   if (!isAuthenticated) {
-     initiateConnection();
-   }
- }, [isAuthenticated]);
 
  return { initiateConnection, isAuthenticated };
 };
