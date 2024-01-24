@@ -1,4 +1,3 @@
-// types.ts
 export type Profile = {
     identifier: string;
     collection: string;
