@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { FleekSdk, ApplicationAccessTokenService } from '@fleekxyz/sdk';
-import axios from 'axios';
 import ProfileCard from '../../components/ProfileCard';
 import { listNftsByAccount } from '../../components/OpenSea';
 import { useAccount } from 'wagmi'
@@ -10,6 +9,8 @@ import { collection, doc, setDoc, query, where, getDocs } from "firebase/firesto
 import { Profile } from 'src/components/profileTypes';
 import { FaXTwitter } from 'react-icons/fa6';
 import { AiOutlineLoading } from "react-icons/ai";
+import useEnsSubdomainSetter from "../../components/useEnsSubdomainSetter"
+
 
 
 const applicationService = new ApplicationAccessTokenService({
@@ -43,6 +44,8 @@ const Upload: React.FC = () => {
     const [uploadedProfile, setUploadedProfile] = useState<Profile | null>(null);
     const [ensSubdomainUrl, setEnsSubdomainUrl] = useState("");
     const [isProfileNameTaken, setIsProfileNameTaken] = useState(false);
+    const setEnsSubdomain = useEnsSubdomainSetter();
+
 
 
     const fetchNfts = async (account: string) => {
@@ -142,7 +145,6 @@ const Upload: React.FC = () => {
                 return;
             }
     
-    
 
             const profileInfo = {
                 ...selectedNft,
@@ -164,11 +166,11 @@ const Upload: React.FC = () => {
             // Add profileInfo to Profiles collection
             await setDoc(newProfileDocRef, profileInfo);
 
-            
     
         try {
-            const ensSetSuccessfully = await setEnsSubdomain(contentHash, ipfsProfilePicUrl);
+            const ensSetSuccessfully = await setEnsSubdomain(profileName, walletAddress || '', bio, twitterHandle, ipfsProfilePicUrl, contentHash);
             if (!ensSetSuccessfully) {
+                // Handle failure
                 setIsLoading(false);
                 return;
             }
@@ -190,43 +192,6 @@ const Upload: React.FC = () => {
     }
     };
     
-
-    const setEnsSubdomain = async (contentHash: string, ipfsProfilePicUrl: string) => {
-        const domain = "brotatdao.eth";
-        const address = walletAddress;
-        const description = bio.substring(0, 255);
-
-        const payload = {
-            domain,
-            name: profileName,
-            address,
-            contenthash: contentHash,
-            text_records: {
-                "com.twitter": twitterHandle,
-                "description": description,
-                "avatar": ipfsProfilePicUrl,
-            },
-            single_claim: 0,
-        };
-
-        // check if production or development environment for proxy or direct api calls
-        const apiBaseUrl = import.meta.env.MODE === 'production' 
-            ? 'https://namestone.xyz/api/public_v1' 
-            : '/api/public_v1';
-
-        
-        try {
-            const response = await axios.post(`${apiBaseUrl}/claim-name`, payload, {
-                headers: { 'Authorization': import.meta.env.VITE_NAMESTONE }
-            });
-            console.log('ENS Subdomain Set:', response.data);
-            return true;
-            } catch (error) {
-            console.error('Error setting ENS subdomain:', error);
-            alert('Failed to set ENS subdomain. Please try again.');
-            return false;
-            }              
-    };
 
     return (
         <div className="min-h-screen bg-zinc-50 flex justify-center items-center">
