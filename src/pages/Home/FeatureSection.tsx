@@ -7,22 +7,22 @@ import { RxAvatar } from "react-icons/rx";
 const features = [
   {
     name: 'Create a profile',
-    description: 'Give your NFT a name and a profile.  Was it GQ man of the year?  Maybe it sold feet pics in the bear. It do what it do.',
+    description: 'Give your NFT a name and a profile.  Was it GQ man of the year?  Maybe it sold feet pics in the bear. Whatever. It do what it do.',
     icon: RxAvatar,
   },
   {
-    name: 'Upload your profile and claim a subdomain',
-    description: 'Connect your wallet - using Sign In With Ethereum (SIWE) to select an NFT you own. You will sign a transaction but it wont trigger a blockchain event nor cost any gas or fees.  The profile page will upload to IPFS and you will claim your subdomain for free.',
+    name: 'Sign in and claim an ENS subdomain',
+    description: 'Connect your wallet and sign in to verify your NFTs.  We will upload that shit to IPFS like a decentralized G and give you an ENS subdomain.',
     icon: BsWindowPlus,
   },
   {
     name: 'Tell the bros',
-    description: 'Introduce your nft to the world at <yourname>.brotatdao.eth',
+    description: 'Dont keep it on the low. Introduce your NFT to the homies at <yourname>.brotatdao.eth',
     icon: HiOutlineChatBubbleOvalLeftEllipsis,
   },
   {
     name: 'Whats next?',
-    description: 'Well..  It do what it dao.',
+    description: 'It do what it dao.',
     icon: RxChevronRight,
   },
 ]
@@ -33,10 +33,10 @@ export default function FeatureSection() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
           <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Welcome to brotatdao.
+            Sup brotatdao.
           </p>
           <p className="mt-6 text-lg leading-8 text-gray-600">
-            your NFT has a biography,  a story to tell, a message for the world.
+            What it do!?! That NFT of yours is packin' a memoir, a fable, a tale, a legend, flaunting its lore with the squad.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
