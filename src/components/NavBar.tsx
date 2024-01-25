@@ -35,7 +35,7 @@ const NavBar = () => {
         <div className="md:hidden text-lg font-semibold">
           <Link to="/" className="block px-4 py-2 text-zinc-600 hover:bg-zinc-200">Home</Link>
           <Link to="/upload" className="block px-4 py-2 text-zinc-600 hover:bg-zinc-200">Upload</Link>
-          <Link to="/explorer" className="block px-4 py-2 text-zinc-600 hover:bg-zinc-200">Explorer</Link>
+          <Link to="/explorer" className="block px-4 py-2 text-zinc-600 hover:bg-zinc-200">SpudCentral</Link>
         </div>
       )}
     </nav>

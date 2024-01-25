@@ -72,7 +72,7 @@ const Explorer: React.FC = () => {
 
             <Switch.Group as="div" className="flex items-center space-x-4 mb-4">
                 <Switch.Label passive>
-                    View All Profiles
+                    All the bros.
                 </Switch.Label>
                 <Switch
                     checked={viewOwnProfiles}
@@ -86,7 +86,7 @@ const Explorer: React.FC = () => {
                     />
                 </Switch>
                 <Switch.Label passive>
-                    View My Profiles
+                    Just my crew.
                 </Switch.Label>
             </Switch.Group>
 
