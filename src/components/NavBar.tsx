@@ -18,7 +18,7 @@ const NavBar = () => {
         <div className="hidden md:flex items-center justify-center flex-1 text-lg font-semibold">
           <Link to="/" className="text-zinc-600 hover:text-zinc-400 px-4 py-2 rounded-md transition duration-200">Home</Link>
           <Link to="/upload" className="text-zinc-600 hover:text-zinc-400 px-4 py-2 rounded-md transition duration-200">Upload</Link>
-          <Link to="/explorer" className="text-zinc-600 hover:text-zinc-400 px-4 py-2 rounded-md transition duration-200">SpudHub</Link>
+          <Link to="/explorer" className="text-zinc-600 hover:text-zinc-400 px-4 py-2 rounded-md transition duration-200">SpudCentral</Link>
         </div>
         <div className="flex items-center">
           <ConnectButton />
