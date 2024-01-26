@@ -1,25 +1,12 @@
-# React + Fleek Starter Kit
+# brotatdao
 
 ![image](https://github.com/fleekxyz/react-template/assets/55561695/0e7bfe91-ffe3-4dd5-852c-c551344163b4)
 
-## 🚀 Project Structure
+## 🚀 what it do?
 
-Inside of your React project, you'll see the following folders and files:
+brotatdao has a homepage, upload page and explorer page.  The homepage just has information on how to use the service.  The upload page allows a user to connect an EVM wallet like metamask, then it allows the user to select an NFT from their wallet where they can then upload a profile page for the NFT they select.  This profile page is uploaded to IPFS using fleek.xyz and an ENS subdomain is set to route the subdomain to the IPFS address displaying the NFT profile page.  The user has the option for a free or paid subdomain.  The paid subdomain registers a subdomain using a set of contracts that gets deployed from this app using hardhat.  It then is then an ERC 1155 ENS nft like all current ENS names.  The explorer is where users can look at all the profiles that have been uploaded using the website.  It pulls information from the database and displays all the profile’s.
 
-```
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── assets/
-│   ├── main.tsx
-│   ├── App.tsx
-│   └── App.css
-├── index.html
-├── tsconfig.json
-├── vide.config.ts
-└── package.json
-```
+React project with vite + hardhat + firebase/firestore 
 
 If you want to lern more about `vite` and `react` you can checkout [Vite Documentation](https://vitejs.dev/).
 
@@ -51,7 +38,7 @@ It will prompt you for a `name`, `dist` directory location & `build command`
 - `build command`: Command to build your site, this will be used to deploy the latest version either by CLI or Github Actions
 
 ### 2. Deploy the site
-After configuiring your `fleek.json` file, you can deployt the site by running
+After configuiring your `fleek.json` file, you can deploy the site by running
 
 ```
 fleek sites deploy
@@ -91,8 +78,8 @@ export default defineConfig({
 This means that assets will be pre-fixed with `./`, you can learn more about it in [Vite Documentation](https://vitejs.dev/config/shared-options.html#base)
 
 
-## 👀 Want to learn more?
+## 👀 Be sure to set up smart contracts!!!
 
-Feel free to check [React documentation](https://react.dev/) or [Vite Documentation](https://vitejs.dev/guide/).
+Follow the README file under ignition/modules
 
 
