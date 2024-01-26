@@ -204,8 +204,8 @@ const Upload: React.FC = () => {
                     </div>
                 ) : uploadSuccess && uploadedProfile ? (
                     <div className="text-center">
-                        <h2 className="text-2xl font-bold text-lime-600">Upload Successful!</h2>
-                        <p className="text-gray-700 my-2">Your new profile page will take between 1 and 10 minutes to fully propagate across the interwebs.</p>
+                        <h2 className="text-2xl font-bold text-lime-600">Sick. You nailed that upload bro.</h2>
+                        <p className="text-gray-700 my-2">Your new profile page will take like 1 to 10 minutes to fully propagate across the interwebs.</p>
                         <div className="bg-gradient-to-br from-white to-zinc-150 rounded-lg shadow-md overflow-hidden flex flex-row mb-5 w-full max-w-4xl mx-auto">
                             <div className="flex-none w-1/3">
                                 <img src={uploadedProfile.image_url || uploadedProfile.profilePicUrl} alt="Profile Pic" className="w-full h-full object-cover rounded-l-lg" />
@@ -217,11 +217,12 @@ const Upload: React.FC = () => {
                         </div>
                         <div className="mt-4">
                             <a href={uploadedProfile.ipfsUrl} target="_blank" rel="noopener noreferrer" className="text-zinc-600 hover:text-zinc-400 transition duration-300">
-                                Raw IPFS Url
+                                straight IPFS link for the inquisitive bros 
                             </a>
                             <br/>
+                            
                             <a href={`https://${ensSubdomainUrl}`} target="_blank" rel="noopener noreferrer" className="text-xl text-lime-600 hover:text-lime-800 transition duration-300">
-                                {profileName}.brotatdao.eth subdomain
+                                {profileName.toLowerCase()}.brotatdao.eth subdomain
                             </a>
                         </div>
                         <button className="mt-6 w-1/2 bg-zinc-600 text-white px-6 py-3 rounded-full hover:bg-zinc-500 transition duration-300" onClick={() => setUploadSuccess(false)}>Create another profile</button>
