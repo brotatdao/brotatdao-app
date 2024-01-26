@@ -3,10 +3,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import { Buffer } from 'buffer'
-import { createRequire } from 'module'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
-
-const require = createRequire(import.meta.url)
 
 export default defineConfig({
   plugins: [
