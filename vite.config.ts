@@ -1,33 +1,31 @@
-// vite.config.ts
-
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 export default defineConfig({
-  plugins: [
+ plugins: [
     react(),
     nodePolyfills(),
-  ],
-  base: "./",
-  resolve: {
+ ],
+ base: "./",
+ resolve: {
     alias: {
       'stream': 'stream-browserify',
       'buffer': 'buffer/',
       'util': 'util',
     },
-  },
-  define: {
+ },
+ define: {
     'process.env': {},
     'process.browser': true,
     'global.Buffer': 'Buffer.from',
-  },
-  build: {
+ },
+ build: {
     rollupOptions: {
       external: ['buffer', 'util', 'stream'],
     },
-  },
-  server: {
+ },
+ server: {
     proxy: {
       '/api/public_v1': {
         target: 'https://namestone.xyz',
@@ -35,5 +33,8 @@ export default defineConfig({
         rewrite: (path) => path,
       },
     },
-  },
+ },
+ optimizeDeps: {
+    include: ['buffer']
+ },
 })
