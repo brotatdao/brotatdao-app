@@ -2,7 +2,6 @@
 
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
-import { Buffer } from 'buffer'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 export default defineConfig({
@@ -21,7 +20,7 @@ export default defineConfig({
   define: {
     'process.env': {},
     'process.browser': true,
-    'Buffer': Buffer,
+    'global.Buffer': 'Buffer.from',
   },
   build: {
     rollupOptions: {
