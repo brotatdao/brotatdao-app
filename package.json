@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
+    "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@fleekxyz/sdk": "^0.7.2",
     "@headlessui/react": "^1.7.18",
     "@moralisweb3/client-firebase-auth-utils": "^2.23.2",
