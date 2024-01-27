@@ -1,20 +1,28 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
+import { Buffer } from 'buffer'
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
+
+
+// Determine if we are in a development environment
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
 export default defineConfig({
   plugins: [
     react(),
-    NodeGlobalsPolyfillPlugin({
-      buffer: true,
-    }),
-    NodeModulesPolyfillPlugin(),
+    // Conditionally apply polyfills based on the environment
+    ...(isDevelopment ? [nodePolyfills()] : [
+      NodeGlobalsPolyfillPlugin({
+        buffer: true,
+      }),
+      NodeModulesPolyfillPlugin(),
+    ]),
   ],
   base: "./",
   resolve: {
     alias: {
-      // Aliasing for browser-compatible versions
       'stream': 'stream-browserify',
       'buffer': 'buffer',
       'util': 'util',
@@ -23,7 +31,7 @@ export default defineConfig({
   define: {
     'process.env': {},
     'process.browser': true,
-    'global.Buffer': 'Buffer.from',
+    'global.Buffer': isDevelopment ? Buffer : 'Buffer.from',
   },
   server: {
     proxy: {
@@ -36,5 +44,10 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['buffer']
+  },
+  build: {
+    rollupOptions: {
+      external: isDevelopment ? [] : ['buffer', 'util', 'stream'],
+    },
   },
 })
