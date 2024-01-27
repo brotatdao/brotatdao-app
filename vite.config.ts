@@ -11,7 +11,7 @@ export default defineConfig({
  resolve: {
     alias: {
       'stream': 'stream-browserify',
-      'buffer': 'buffer/',
+      'buffer': require.resolve('buffer/'),
       'util': 'util',
     },
  },
@@ -19,11 +19,6 @@ export default defineConfig({
     'process.env': {},
     'process.browser': true,
     'global.Buffer': 'Buffer.from',
- },
- build: {
-    rollupOptions: {
-      external: ['buffer', 'util', 'stream'],
-    },
  },
  server: {
     proxy: {
