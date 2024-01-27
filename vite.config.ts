@@ -1,35 +1,39 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
-import { Buffer } from 'buffer'
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
-import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
+import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig(({ mode }) => {
- console.log(`Running in mode: ${mode}`);
- console.log('NODE_ENV:', process.env.NODE_ENV);
+  console.log(`Running in mode: ${mode}`);
+  console.log('NODE_ENV:', process.env.NODE_ENV);
 
- return {
-    plugins: [
+  // Plugins for development
+  let plugins = [react(), nodePolyfills()];
+
+  // Plugins for production
+  if (mode === 'production') {
+    plugins = [
       react(),
-      nodePolyfills(),
-      NodeGlobalsPolyfillPlugin({
-        buffer: true,
-      }),
+      NodeGlobalsPolyfillPlugin({ buffer: true }),
       NodeModulesPolyfillPlugin(),
-    ],
-    base: "./",
+    ];
+  }
+
+  return {
+    plugins: plugins,
+    base: './',
     resolve: {
       alias: {
-        'stream': 'stream-browserify',
-        'buffer': 'buffer',
-        'util': 'util',
+        stream: 'stream-browserify',
+        buffer: 'buffer',
+        util: 'util',
       },
     },
     define: {
       'process.env': {},
       'process.browser': true,
-      'global.Buffer': mode === 'development' ? Buffer : 'Buffer.from',
+      'global.Buffer': Buffer,
     },
     server: {
       proxy: {
@@ -41,12 +45,12 @@ export default defineConfig(({ mode }) => {
       },
     },
     optimizeDeps: {
-      include: ['buffer']
+      include: ['buffer'],
     },
     build: {
       rollupOptions: {
         external: mode === 'development' ? [] : ['buffer', 'util', 'stream'],
       },
     },
- };
+  };
 });
