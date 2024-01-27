@@ -5,17 +5,21 @@ import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfil
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
-export default defineConfig(({ mode }) => ({
-  plugins: [
-    react(),
-    // Conditionally apply polyfills based on the environment
-    ...(mode === 'development' ? [nodePolyfills()] : [
-      NodeGlobalsPolyfillPlugin({
-        buffer: true,
-      }),
-      NodeModulesPolyfillPlugin(),
-    ]),
-  ],
+export default defineConfig(({ mode }) => {
+  console.log(`Running in mode: ${mode}`);
+  console.log('NODE_ENV:', process.env.NODE_ENV);
+
+  return {
+     plugins: [
+       react(),
+       // Conditionally apply polyfills based on the environment
+       ...(mode === 'development' ? [nodePolyfills()] : [
+         NodeGlobalsPolyfillPlugin({
+           buffer: true,
+         }),
+         NodeModulesPolyfillPlugin(),
+       ]),
+     ],
   base: "./",
   resolve: {
     alias: {
@@ -46,4 +50,4 @@ export default defineConfig(({ mode }) => ({
       external: mode === 'development' ? [] : ['buffer', 'util', 'stream'],
     },
   },
-}))
+  }});
