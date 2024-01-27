@@ -5,15 +5,11 @@ import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfil
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
-
-// Determine if we are in a development environment
-const isDevelopment = process.env.NODE_ENV !== 'production';
-
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     // Conditionally apply polyfills based on the environment
-    ...(isDevelopment ? [nodePolyfills()] : [
+    ...(mode === 'development' ? [nodePolyfills()] : [
       NodeGlobalsPolyfillPlugin({
         buffer: true,
       }),
@@ -31,14 +27,14 @@ export default defineConfig({
   define: {
     'process.env': {},
     'process.browser': true,
-    'global.Buffer': isDevelopment ? Buffer : 'Buffer.from',
+    'global.Buffer': mode === 'development' ? Buffer : 'Buffer.from',
   },
   server: {
     proxy: {
       '/api/public_v1': {
         target: 'https://namestone.xyz',
         changeOrigin: true,
-        rewrite: (path) => path,
+        rewrite: (path) => path.replace(/^\/api\/public_v1/, ''),
       },
     },
   },
@@ -47,7 +43,7 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      external: isDevelopment ? [] : ['buffer', 'util', 'stream'],
+      external: mode === 'development' ? [] : ['buffer', 'util', 'stream'],
     },
   },
-})
+}))
