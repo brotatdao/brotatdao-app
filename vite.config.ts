@@ -6,48 +6,47 @@ import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfil
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 export default defineConfig(({ mode }) => {
-  console.log(`Running in mode: ${mode}`);
-  console.log('NODE_ENV:', process.env.NODE_ENV);
+ console.log(`Running in mode: ${mode}`);
+ console.log('NODE_ENV:', process.env.NODE_ENV);
 
-  return {
-     plugins: [
-       react(),
-       // Conditionally apply polyfills based on the environment
-       ...(mode === 'development' ? [nodePolyfills()] : [
-         NodeGlobalsPolyfillPlugin({
-           buffer: true,
-         }),
-         NodeModulesPolyfillPlugin(),
-       ]),
-     ],
-  base: "./",
-  resolve: {
-    alias: {
-      'stream': 'stream-browserify',
-      'buffer': 'buffer',
-      'util': 'util',
-    },
-  },
-  define: {
-    'process.env': {},
-    'process.browser': true,
-    'global.Buffer': mode === 'development' ? Buffer : 'Buffer.from',
-  },
-  server: {
-    proxy: {
-      '/api/public_v1': {
-        target: 'https://namestone.xyz',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/public_v1/, ''),
+ return {
+    plugins: [
+      react(),
+      nodePolyfills(),
+      NodeGlobalsPolyfillPlugin({
+        buffer: true,
+      }),
+      NodeModulesPolyfillPlugin(),
+    ],
+    base: "./",
+    resolve: {
+      alias: {
+        'stream': 'stream-browserify',
+        'buffer': 'buffer',
+        'util': 'util',
       },
     },
-  },
-  optimizeDeps: {
-    include: ['buffer']
-  },
-  build: {
-    rollupOptions: {
-      external: mode === 'development' ? [] : ['buffer', 'util', 'stream'],
+    define: {
+      'process.env': {},
+      'process.browser': true,
+      'global.Buffer': mode === 'development' ? Buffer : 'Buffer.from',
     },
-  },
-  }});
+    server: {
+      proxy: {
+        '/api/public_v1': {
+          target: 'https://namestone.xyz',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api\/public_v1/, ''),
+        },
+      },
+    },
+    optimizeDeps: {
+      include: ['buffer']
+    },
+    build: {
+      rollupOptions: {
+        external: mode === 'development' ? [] : ['buffer', 'util', 'stream'],
+      },
+    },
+ };
+});
