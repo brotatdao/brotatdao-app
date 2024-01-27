@@ -33,7 +33,7 @@ export default defineConfig(({ mode }) => {
     define: {
       'process.env': {},
       'process.browser': true,
-      'global.Buffer': Buffer,
+      // Removed the global.Buffer definition as Buffer will be imported directly
     },
     server: {
       proxy: {
