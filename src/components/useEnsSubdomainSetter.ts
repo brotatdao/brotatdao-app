@@ -21,19 +21,18 @@ const useEnsSubdomainSetter = () => {
 
         // check if production or development environment for proxy or direct api calls
         const apiBaseUrl = import.meta.env.MODE === 'production' 
-            ? 'https://namestone.brotatdao.xyz:433' 
+            ? 'https://us-central1-brotatdao.cloudfunctions.net/proxy' 
             : '/api/public_v1';      
 
-        try {
-            const response = await axios.post(`${apiBaseUrl}/https://namestone.xyz/api/public_v1/claim-name`, payload, {
-                headers: { 'Authorization': import.meta.env.VITE_NAMESTONE }
-            });
-            console.log('ENS Subdomain Set:', response.data);
-            return true;
-        } catch (error) {
-            console.error('Error setting ENS subdomain:', error);
-            return false;
-        }
+            try {
+                const response = await axios.post(`${apiBaseUrl}/claim-name`, payload);
+                console.log('ENS Subdomain Set:', response.data);
+                return true;
+            } catch (error) {
+                console.error('Error setting ENS subdomain:', error);
+                return false;
+            }
+            
     };
 
     return setEnsSubdomain;
