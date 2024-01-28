@@ -19,16 +19,16 @@ const useEnsSubdomainSetter = () => {
             single_claim: 0,
         };
 
+
         // check if production or development environment for proxy or direct api calls
         const apiBaseUrl = import.meta.env.MODE === 'production' 
             ? 'https://us-central1-brotatdao.cloudfunctions.net/proxy' 
             : '/api/public_v1';      
 
-        // Define the headers
-        const headers = { 'Authorization': import.meta.env.VITE_NAMESTONE };
-
         try {
-            const response = await axios.post(`${apiBaseUrl}/claim-name`, payload, { headers });
+            const response = await axios.post(`${apiBaseUrl}/claim-name`, payload, {
+                headers: { 'Authorization': import.meta.env.VITE_NAMESTONE }
+            });
             console.log('ENS Subdomain Set:', response.data);
             return true;
         } catch (error) {
