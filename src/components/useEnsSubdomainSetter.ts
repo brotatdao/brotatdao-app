@@ -24,15 +24,17 @@ const useEnsSubdomainSetter = () => {
             ? 'https://us-central1-brotatdao.cloudfunctions.net/proxy' 
             : '/api/public_v1';      
 
-            try {
-                const response = await axios.post(`${apiBaseUrl}/claim-name`, payload);
-                console.log('ENS Subdomain Set:', response.data);
-                return true;
-            } catch (error) {
-                console.error('Error setting ENS subdomain:', error);
-                return false;
-            }
-            
+        // Define the headers
+        const headers = { 'Authorization': import.meta.env.VITE_NAMESTONE };
+
+        try {
+            const response = await axios.post(`${apiBaseUrl}/claim-name`, payload, { headers });
+            console.log('ENS Subdomain Set:', response.data);
+            return true;
+        } catch (error) {
+            console.error('Error setting ENS subdomain:', error);
+            return false;
+        }
     };
 
     return setEnsSubdomain;
