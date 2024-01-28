@@ -21,7 +21,7 @@ const useEnsSubdomainSetter = () => {
 
         // check if production or development environment for proxy or direct api calls
         const apiBaseUrl = import.meta.env.MODE === 'production' 
-            ? 'https://namestone.xyz/api/public_v1' 
+            ? 'https://namestone.brotatdao.xyz/api/public_v1' 
             : '/api/public_v1';
 
             // Log the API base URL to the console
