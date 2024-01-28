@@ -21,11 +21,8 @@ const useEnsSubdomainSetter = () => {
 
         // check if production or development environment for proxy or direct api calls
         const apiBaseUrl = import.meta.env.MODE === 'production' 
-            ? 'https://namestone.brotatdao.xyz/api/public_v1' 
-            : '/api/public_v1';
-
-            // Log the API base URL to the console
-        console.log('API Base URL:', apiBaseUrl);
+            ? 'https://namestone.brotatdao.xyz/api' 
+            : '/api/public_v1';      
 
         try {
             const response = await axios.post(`${apiBaseUrl}/claim-name`, payload, {
