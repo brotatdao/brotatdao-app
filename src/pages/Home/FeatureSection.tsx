@@ -36,7 +36,7 @@ export default function FeatureSection() {
             Sup brotatdao.
           </p>
           <p className="mt-6 text-lg leading-8 text-gray-600">
-            What it do!?! That NFT of yours is packin' a memoir, a fable, a tale, a legend: its time to flaunt its lore to the squad.
+            What it do!?! That NFT of yours is packin' a memoir, a fable, a tale, a legend. <br/> It's time to flaunt its lore to the squad.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
