@@ -26,9 +26,8 @@ const useEnsSubdomainSetter = () => {
             : '/api/public_v1';      
 
         try {
-            const response = await axios.post(`${apiBaseUrl}/claim-name`, payload, {
-                headers: { 'Authorization': import.meta.env.VITE_NAMESTONE }
-            });
+        
+            const response = await axios.post(`${apiBaseUrl}/claim-name`, payload);
             console.log('ENS Subdomain Set:', response.data);
             return true;
         } catch (error) {
