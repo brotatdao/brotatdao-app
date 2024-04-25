@@ -6,9 +6,7 @@
     "skipLibCheck": true,
     "typeRoots" : ["./types", "./node_modules/@types"],
     "baseUrl": ".",
-    "paths": {
-      "weavedb-sdk": ["types/weavedb-sdk"]
-    },
+    "types": ["vite/client", "node"],
     
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -25,5 +23,6 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["./**/*.ts", "./**/*.tsx", "./types/**/*.d.ts"],
+  "exclude": ["node_modules", "functions"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
