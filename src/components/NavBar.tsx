@@ -13,6 +13,7 @@ const NavBar = () => {
         <Link to="/" className="flex items-center group">
             <img src={Logo} alt="Logo" className="h-14 w-14 mr-2 cursor-pointer group-hover:opacity-70 transition-opacity duration-300" />
             <span className="text-lg font-semibold text-zinc-600 group-hover:text-zinc-400 transition-colors duration-200">brotatdao</span>
+            <span className="text-lg font-semibold text-lime-600 ml-2">BETA</span>
           </Link>
         </div>
         <div className="hidden md:flex items-center justify-center flex-1 text-lg font-semibold">
