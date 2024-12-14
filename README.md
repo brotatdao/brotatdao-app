@@ -1,14 +1,12 @@
-# brotatdao
+# brotatdao - app
 
-![image](https://github.com/fleekxyz/react-template/assets/55561695/0e7bfe91-ffe3-4dd5-852c-c551344163b4)
+## 🚀 Bring your nfts to life by giving your NFT profile pic a profile page!
 
-## 🚀 what it do?
+Select an NFT from your wallet, give it a name and a profile.  As configured it will register a subdomain of brotatdao.eth and upload a profile page to that address.  name.brotatdao.eth  .  All this completely gasless.
 
-brotatdao has a homepage, upload page and explorer page.  The homepage just has information on how to use the service.  The upload page allows a user to connect an EVM wallet like metamask, then it allows the user to select an NFT from their wallet where they can then upload a profile page for the NFT they select.  This profile page is uploaded to IPFS using fleek.xyz and an ENS subdomain is set to route the subdomain to the IPFS address displaying the NFT profile page.  The user has the option for a free or paid subdomain.  The paid subdomain registers a subdomain using a set of contracts that gets deployed from this app using hardhat.  It then is then an ERC 1155 ENS nft like all current ENS names.  The explorer is where users can look at all the profiles that have been uploaded using the website.  It pulls information from the database and displays all the profile’s.
+The wallet connection is only to select an owned NFT.  No transactions are made.  
 
-React project with vite + hardhat + firebase/firestore 
-
-If you want to lern more about `vite` and `react` you can checkout [Vite Documentation](https://vitejs.dev/).
+The profile page is uploaded to IPFS using fleek.xyz and an ENS subdomain is set to route the subdomain to the IPFS address displaying the NFT profile page completely free and gasless.  The explorer page uses a firebase database where users can look at all the profiles that have been uploaded using the website.  
 
 ## 🧞 Commands
 
@@ -76,10 +74,3 @@ export default defineConfig({
 ```
 
 This means that assets will be pre-fixed with `./`, you can learn more about it in [Vite Documentation](https://vitejs.dev/config/shared-options.html#base)
-
-
-## 👀 Be sure to set up smart contracts!!!
-
-Follow the README file under ignition/modules
-
-
